@@ -1,2 +1,3 @@
-Im working on 
-verkeer-2
+Projects:
+* verkeer-1 Basic driving on a crossing
+* verkeer-2 Advanced navigation in the city

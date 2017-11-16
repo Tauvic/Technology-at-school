@@ -1,0 +1,39 @@
+{	"extensionName": "botTalk Advanced",
+	"description": "Makeblock mBot Advanced",
+	"version": "1.0",
+	"author": "Tauvic Ritter",
+	"homepage": "tauvicr.wordpress.com",
+	"sort":0,
+	"javascriptURL":"js/botTalk.js",
+  "extensionPort":0,
+	"blockSpecs": [
+		["w", "turn on %m.led %m.color LED","ledOn", "left","red",{}],
+		["w", "turn off %m.led LED","ledOff", "left",{}],
+		["w", "play note %d","playNote", "330",{}],
+		["w", "set speed %d.speed","setSpeed", "slow",{}],	
+		["w", "move %m.direction","move", "forward", {"encode":"{d0}{s1}"}],
+		["w", "stop","stop",{}],
+		["w", "follow line to intersection or line end","followLine",{}],	
+		["h", "When at junction","whenJunction",{}],
+		["h", "When at line end","whenLineEnd",{}],
+		["w", "stop line following","stopFollowLine",{}],	
+		["w", "calibrate robot","calibrate", {}],
+		
+	],
+	"menus": {
+		"led":["left","right","all"],
+		"color":["white","green","blue","yellow","orange","red","black"],
+		"direction":["forward","backward","turn right","turn left","turn around","stop"],
+		"speed":["slow","normal","fast"]
+	},
+	"values":{
+		"stop":0,
+		"forward":1,
+		"backward":2,
+		"turn left":3,
+		"turn right":4,
+		"turn around":5
+	},
+	"translators":{
+	}
+}

@@ -4,8 +4,8 @@ working on:
 * Easy robot programming
   * RoboCode Basic
   * RoboCode Advanced
-  * RoboGrip
-  * RoboVision
+  * RoboGrip (manus roboticus)
+  * RoboVision (visis roboticus)
 * Better control over motor
   * https://www.precisionmicrodrives.com/application-notes/ab-026-sensorless-speed-stabiliser-for-a-dc-motor
   * https://robidouille.wordpress.com/2009/09/20/back-emf/

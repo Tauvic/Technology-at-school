@@ -12,3 +12,5 @@ working on:
   * https://robidouille.wordpress.com/2009/09/20/back-emf/
 * Energy management battery voltage / current http://www.vwlowen.co.uk/arduino/current/current.htm
 * Gripper http://forum.makeblock.com/t/mcore-robotic-arm-gripper/5821/4
+* Color sensor http://forum.makeblock.com/t/extension-for-color-sensor-tcs-34725/7331/23
+* NXP FXAS21002C Gyroscope

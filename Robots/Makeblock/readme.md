@@ -6,6 +6,8 @@ working on:
   * RoboCode Advanced
   * RoboGrip (manus roboticus)
   * RoboVision (visis roboticus)
+* Improve editor
+  * Snap4Arduino https://snap.berkeley.edu/SnapManual.pdf
 * Better control over motor
   * https://www.precisionmicrodrives.com/application-notes/ab-026-sensorless-speed-stabiliser-for-a-dc-motor
   * https://www.precisionmicrodrives.com/application-notes/ab-021-measuring-rpm-from-back-emf

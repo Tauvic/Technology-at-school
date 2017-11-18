@@ -10,7 +10,6 @@ Enable children, elderly  and myself to learn everything we like to know about p
 
 ## Contents
 
-* [Programming](../../master/Programming/README.md) - 
 * [Robots](../../tree/master/Robots) - Ozobot / mBot / V-REP
-
+* [Programming](../../master/Programming/README.md) - still empty
 

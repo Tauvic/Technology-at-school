@@ -9,11 +9,17 @@ working on:
 * Improve editor
   * Snap4Arduino https://snap.berkeley.edu/SnapManual.pdf
   * http://www.snap-apps.org/
-* Better control over motor
-  * https://www.precisionmicrodrives.com/application-notes/ab-026-sensorless-speed-stabiliser-for-a-dc-motor
-  * https://www.precisionmicrodrives.com/application-notes/ab-021-measuring-rpm-from-back-emf
-  * https://robidouille.wordpress.com/2009/09/20/back-emf/
-* Energy management battery voltage / current http://www.vwlowen.co.uk/arduino/current/current.htm
-* Gripper http://forum.makeblock.com/t/mcore-robotic-arm-gripper/5821/4
-* Color sensor http://forum.makeblock.com/t/extension-for-color-sensor-tcs-34725/7331/23
-* NXP FXAS21002C Gyroscope
+* Sensors
+  * Line following array
+  * NXP FXAS21002C Gyroscope
+  * Energy management battery voltage / current http://www.vwlowen.co.uk/arduino/current/current.htm
+  * Color sensor http://forum.makeblock.com/t/extension-for-color-sensor-tcs-34725/7331/23
+* Actuators
+  * Gripper http://forum.makeblock.com/t/mcore-robotic-arm-gripper/5821/4
+  * Better control over motor
+    * https://www.precisionmicrodrives.com/application-notes/ab-026-sensorless-speed-stabiliser-for-a-dc-motor
+    * https://www.precisionmicrodrives.com/application-notes/ab-021-measuring-rpm-from-back-emf
+    * https://robidouille.wordpress.com/2009/09/20/back-emf/
+
+
+![Scratch Programming](https://pbs.twimg.com/media/DOt5ZuGVQAAhaVC.jpg)

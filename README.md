@@ -12,3 +12,4 @@ Read more about this the project in the [Wikie](https://github.com/Tauvic/Techno
 * [Programming](../../master/Programming/README.md) - still empty
 
 
+![robot-learning](https://tauvicr.files.wordpress.com/2017/11/3a35ef6300000578-0-image-m-56_1478708896714.jpg)

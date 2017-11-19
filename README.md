@@ -4,7 +4,7 @@
 
 Enable children, elderly  and myself to learn everything we like to know about programming and robots.
 
-Read more about this the project in the [Wikie](https://github.com/Tauvic/Technology-at-school/wiki)
+Read more about the project on the [Wikie](https://github.com/Tauvic/Technology-at-school/wiki)
 
 ## Contents
 

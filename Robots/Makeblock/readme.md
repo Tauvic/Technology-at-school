@@ -20,6 +20,7 @@ working on:
     * https://www.precisionmicrodrives.com/application-notes/ab-026-sensorless-speed-stabiliser-for-a-dc-motor
     * https://www.precisionmicrodrives.com/application-notes/ab-021-measuring-rpm-from-back-emf
     * https://robidouille.wordpress.com/2009/09/20/back-emf/
+    * https://arduino-info.wikispaces.com/SmallSteppers
 
 
 ![Scratch Programming](https://pbs.twimg.com/media/DOt5ZuGVQAAhaVC.jpg)

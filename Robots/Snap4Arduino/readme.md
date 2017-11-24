@@ -1,4 +1,6 @@
 
+Snap4Arduino enables access to Arduino based boards (such as Makeblock mBot)
+
 Website: http://snap4arduino.rocks/
 
 Online editor: http://snap4arduino.rocks/run/

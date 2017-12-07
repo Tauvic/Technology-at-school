@@ -12,6 +12,7 @@ class LineDriver
     LineDriver(LineArray sensor);
     void setParams(uint8_t power,float kP,float t_ratio, int t_time);
     void drive();
+    void doForward();
     void doStop();
     actions getCurrentAction();
     uint8_t getLeftPower();

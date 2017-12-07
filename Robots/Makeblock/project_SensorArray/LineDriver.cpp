@@ -28,6 +28,11 @@ LineDriver::actions LineDriver::getCurrentAction() {
   return current_action;
 }
 
+void LineDriver::doForward() {
+  current_action = do_forward;
+}
+
+
 void LineDriver::doStop() {
   current_action = do_stop;
   motor_left = 0;
@@ -52,10 +57,14 @@ void LineDriver::drive() {
 
       //Decide if we want to change direction or continue line following
 
+
+      //if we do_forward then check line position
+      //if we do_left (or right) keep turning until we are on the line
+
       //determine what we want, can and should do
       //do_left, do_right, do_stop, do_forward
             
-      switch (sensor.readSensor()) {
+      switch (sensor.getDirection()) {
          case LineArray::can_left:
                if ( current_action == do_left ) {
                  if ( millis() - action_timer > turn_time ) current_action = do_forward;                

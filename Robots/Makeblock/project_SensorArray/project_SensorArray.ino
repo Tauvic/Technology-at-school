@@ -25,7 +25,7 @@ void setup(){
     //set line sensor pin
     lineArray.setPort(12);
 
-    lineDriver.setParams(100,0.7,0.1,500);
+    lineDriver.setParams(100,0.7,0.1,5000);
 
 /*
     //Wait until button pressed
@@ -41,7 +41,7 @@ void setup(){
 const uint8_t command_mode = 0;
 const uint8_t line_mode = 1;
 
-uint8_t mode = command_mode;
+uint8_t mode = line_mode;
 
 void loop(){
 
@@ -49,6 +49,10 @@ void loop(){
 
     //Handle communication
     //switch between command and line mode
+    if ( Serial.available() ) {
+      Serial.read();
+      lineDriver.doForward();
+    }
     
     //Do other things
 
@@ -78,13 +82,13 @@ void loop(){
       //Control the motor
       uint8_t left = lineDriver.getLeftPower();
       uint8_t right = lineDriver.getRightPower();
-      motor_9.run((9)==M1?-(left):(left));
-      motor_10.run((10)==M1?-(right):(right));       
+      //motor_9.run((9)==M1?-(left):(left));
+      //motor_10.run((10)==M1?-(right):(right));       
     }
 
     //Keep the loop repeat time constant
     //the value here must be determined experimentaly
-    _delay(startTime,0.020);
+    _delay(startTime,1.0);
 }
 
 void _delay(float startTime, float seconds){

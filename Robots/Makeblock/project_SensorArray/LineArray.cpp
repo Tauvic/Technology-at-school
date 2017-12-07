@@ -54,12 +54,12 @@ LineArray::direction LineArray::getDirection(){
 
       //Get sensor on/off reading
       //B111111 = 63 can go left and right
-      //B111100 = 60 can go left
-      //B001111 = 15 can go right
+      //B111100 = 60 can go right
+      //B001111 = 15 can go left
 
       switch (raw) {
-         case 60: return can_left; 
-         case 15: return can_right;
+         case 60: return can_right; 
+         case 15: return can_left;
          case 63: return can_left_right;
          default: return can_forward;
       };
@@ -144,7 +144,7 @@ bool LineArray::readSensor(){
       //Method: http://theultimatelinefollower.blogspot.nl/2015/12/interpolation.html
       //float norm[8] = {-3.0,-1.8,-0.6,0.6,1.8,3.0};
       // -3000 -1800 -600
-      weighted = (-30 * bitRead(raw,0)) + (-18 * bitRead(raw,1)) + (-6 * bitRead(raw,2)) + (6 * bitRead(raw,3)) + (18 * bitRead(raw,4)) + (30 * bitRead(raw,5)); // / (2.0 );
+      weighted = (-30 * bitRead(raw,0)) + (-18 * bitRead(raw,1)) + (-6 * bitRead(raw,2)) + (6 * bitRead(raw,3)) + (18 * bitRead(raw,4)) + (30 * bitRead(raw,5));
       weighted = weighted / cnt;
       valid = true;
     };

@@ -99,7 +99,11 @@
 		'red': [255,0,0],
 		'black': [0,0,0]
 	};
-	var speed = 0;
+	
+
+	var robotSpeed = 0;
+	var robotState = null;
+	var robotStateRefreshed = (new Date()).getTime()
 	
 	ext.setLed = function(ledIndex,color){
 		trace('setLed('+ledIndex+','+color+')');
@@ -114,7 +118,7 @@
 
     ext.setSpeed = function(s) {
 		var code={ "slow":80,"normal":160,"fast":255};
-		speed = code[s];
+		robotSpeed = code[s];
 		responseValue();
     };
 
@@ -122,25 +126,42 @@
         runPackage(5,short2array(-leftSpeed),short2array(rightSpeed));		
     };
 
-    ext.runLineFollowDriver = function(speed,kP) {
-        runPackage(28,short2array(speed),float2array(kP));		
-    };
+    ext.getLineArray = function(nextID,port){
+		//L=CanGoLeft,R=CanGoRight,F=CanGoForward,B=CanGoBackward,S=CanStop,T=CanTurn
+		//port 1 , pin = 12
+		getPackage(nextID,28,port);		
+		
+		/*
+		var now = (new Date()).getTime();
+		if ((now - robotStateRefreshed) > 100) {
+			//Refresh robot status
+			responseValue(nextID,"LRFBS");		
+		}			
+		else
+			responseValue(nextID,robotState);
+		*/		
+	}
 	
+	//Set lineDriver
+    ext.runLineFollowDriver = function(kP) {
+        runPackage(29,short2array(robotSpeed),float2array(kP));		
+    };		
+
     ext.runMove = function(direction) {
 		var leftSpeed = 0;
 		var rightSpeed = 0;
 		if(direction=="forward"){
-			leftSpeed = -speed;
-			rightSpeed = speed;
+			leftSpeed = -robotSpeed;
+			rightSpeed = robotSpeed;
 		}else if(direction=="backward"){
-			leftSpeed = speed;
-			rightSpeed = -speed;
+			leftSpeed = robotSpeed;
+			rightSpeed = -robotSpeed;
 		}else if(direction=="left"){
-			leftSpeed = speed;
-			rightSpeed = speed;
+			leftSpeed = robotSpeed;
+			rightSpeed = robotSpeed;
 		}else if(direction=="right"){
-			leftSpeed = -speed;
-			rightSpeed = -speed;
+			leftSpeed = -robotSpeed;
+			rightSpeed = -robotSpeed;
 		}
         runPackage(5,short2array(leftSpeed),short2array(rightSpeed));		
     };

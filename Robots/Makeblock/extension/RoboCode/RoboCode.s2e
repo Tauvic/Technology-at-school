@@ -8,14 +8,16 @@
 	"javascriptURL":"js/RoboCode.js",
 	"isMakeBlockBoard":false,
 	"blockSpecs": [
-		["w","set led %d.index to color %m.color","setLed","all","red",{"encode":"{s0}"}],
+		["w", "set led %d.index to color %m.color","setLed","all","red",{"encode":"{s0}"}],
 		["w", "set speed %m.speed","setSpeed", "slow",{}],	
 		["w", "set motor left %n right %n","setMotor", "0", "0",{}],		
 		["w", "move %d.direction","runMove", "forward", {"encode":"{s0}"}],
 		["w", "stop","runStop",{}],
-		["w", "start LineFollowDriver speed %n kP %n","runLineFollowDriver","30","7",{}]
+		["R", "getLineArray %d.normalPort","getLineArray","Port1",{"encode":"{s0}"}],		
+		["w", "linefollower kP=%n","runLineFollowDriver","7.2",{}]
 	],
 	"menus": {
+		"mode":["start","stop"],
 		"color":["white","green","blue","yellow","orange","red","black"],
 		"speed":["slow","normal","fast"],				
 		"direction":["forward","backward","left","right","turn around","stop"],

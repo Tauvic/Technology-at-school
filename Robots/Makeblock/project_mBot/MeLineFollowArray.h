@@ -22,11 +22,8 @@ class MeLineFollowArray : public MePort
     int8_t getPosition();
     direction getDirection();
 		uint8_t getRawValue();
-		char * getBINValue();
-		boolean checkBIN(String val);
  private:
 		uint8_t raw=0;
-    char bin[7];
     int8_t weighted=0;
     bool isValidLine(uint8_t raw);
 		String fillZero(String bin);

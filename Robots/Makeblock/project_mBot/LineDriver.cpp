@@ -1,5 +1,5 @@
 #include "LineDriver.h"
-LineDriver::LineDriver(LineArray _sensor){
+LineDriver::LineDriver(MeLineFollowArray _sensor){
   sensor = _sensor;
 }
 
@@ -65,7 +65,7 @@ void LineDriver::drive() {
       //do_left, do_right, do_stop, do_forward
             
       switch (sensor.getDirection()) {
-         case LineArray::can_left:
+         case MeLineFollowArray::can_left:
                if ( current_action == do_left ) {
                  if ( millis() - action_timer > turn_time ) current_action = do_forward;                
                  break;
@@ -82,7 +82,7 @@ void LineDriver::drive() {
                
                break;
                
-         case LineArray::can_right:
+         case MeLineFollowArray::can_right:
                if ( current_action == do_right ) {
                  if ( millis() - action_timer > turn_time ) current_action = do_forward;                
                  break;
@@ -118,8 +118,6 @@ void LineDriver::drive() {
       motor_right = 0;
     }
 
-    sendDebug(",bin=");
-    sendDebug(sensor.getBINValue());
     sendDebug(",L=");
     sendDebug(motor_left);
     sendDebug(",R=");

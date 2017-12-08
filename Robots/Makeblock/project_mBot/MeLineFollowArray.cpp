@@ -1,4 +1,5 @@
 #include "MeLineFollowArray.h"
+
 MeLineFollowArray::MeLineFollowArray(){
 }
 
@@ -10,13 +11,6 @@ int8_t MeLineFollowArray::getPosition() {
   return weighted;
 }
 
-char * MeLineFollowArray::getBINValue() {
-  return bin;
-}
-
-boolean MeLineFollowArray::checkBIN(String val) {
-	return (val.substring(1) == getBINValue());
-}
 
 boolean MeLineFollowArray::isValidLine(uint8_t val) {
   
@@ -61,11 +55,12 @@ MeLineFollowArray::direction MeLineFollowArray::getDirection(){
       };
 }
 
+
 bool MeLineFollowArray::readSensor(){
 
-	long time_out_flag = 0;
-
-  uint8_t DataPin=pin2();
+  uint8_t Sensor_Data[3];
+	unsigned long time_out_flag = 0;
+  uint8_t DataPin = pin2();  
 
   //Wakeup sensor
 	pinMode(DataPin, OUTPUT);
@@ -74,6 +69,11 @@ bool MeLineFollowArray::readSensor(){
 	digitalWrite(DataPin, LOW);
 	delayMicroseconds(980);
 
+  // ===================================== ||
+  // Begin of time critical section        ||
+  // Disable interrupts to garantee timing ||
+  noInterrupts();
+ 
   //Send 50 uSec high bit 
 	digitalWrite(DataPin, HIGH);
 	delayMicroseconds(40);
@@ -91,12 +91,12 @@ bool MeLineFollowArray::readSensor(){
 	while((digitalRead(DataPin) == 1)&&((millis() - time_out_flag) < 6));
 
   //Now read sensor data 3*bit MSB first
-  uint8_t Sensor_Data[3];
+  //Note : we may skip reading the third byte and save some time
 	for(uint8_t k=0; k<3; k++)
 	{
 			Sensor_Data[k] = 0x00;
 
-      //Read 8 bits
+      //Read 8 bits encoded with low - high transitions
 			for(uint8_t i=0;i<8;i++)
 			{
           //Low bit 50 uSec
@@ -111,10 +111,15 @@ bool MeLineFollowArray::readSensor(){
 					HIGH_level_read_time = micros() - HIGH_level_read_time;
 				  if ( ! (HIGH_level_read_time > 50 && HIGH_level_read_time < 100) )
 					{
-							Sensor_Data[k] |= (0x80 >> i); // Set bit high
+							Sensor_Data[k] |= (0x80 >> i); // Set bit high when we see a dark line
 					}           
 			}
 	}
+
+  interrupts();
+  // Enable interrupt processing   ||
+  // End of time critical section  ||
+  // ============================= ||
 
   //Init results
   raw = 0;
@@ -129,13 +134,8 @@ bool MeLineFollowArray::readSensor(){
     //count number of high bits
     int cnt = 0;
     for (uint8_t i=0;i < 6;i++) {
-      if ( bitRead(raw,i) ) {
-        bin[i]='1'; cnt++;
-      } else {
-        bin[i]='0';       
-      };
+      if ( bitRead(raw,i) ) cnt++;
     };
-    bin[6]='\0';
 
     if ( cnt > 0 && isValidLine(raw) ) {
       //Calulate position on line by weighted average
@@ -146,7 +146,6 @@ bool MeLineFollowArray::readSensor(){
       weighted = weighted / cnt;
       valid = true;
     };
-
 
 	}
 

@@ -39,7 +39,7 @@
 //#define GASSENSOR              25
 //#define COMPASS                26
 #define TEMPERATURE_SENSOR_1   27
-#define LINEFOLLOW_ARRAY       28
+#define ROBOT_STATUS           28
 #define DIGITAL                30
 #define ANALOG                 31
 #define PWM                    32
@@ -48,6 +48,10 @@
 #define BUTTON_INNER           35
 #define ULTRASONIC_ARDUINO     36
 #define PULSEIN                37
+//MeLineFollowerArray
+#define LINEFOLLOW_ARRAY       38
+#define LINEFOLLOW_DRIVER      39
+
 //#define STEPPER                40
 //#define LEDMATRIX              41
 #define TIMER                  50
@@ -231,7 +235,9 @@ uint8_t keyPressed = KEY_NULL;
  void runModule(int device);
  int searchServoPin(int pin);
  void readSensor(int device);
- 
+
+#include "Robot.h"
+Robot robot;
  
 void readButtonInner(uint8_t pin, int8_t s)
 {
@@ -803,25 +809,32 @@ void readSensor(int device){
      sendByte(keyPressed == readBuffer(7));
    }
    break;
+   #ifdef ROBOT_STATUS
+   case ROBOT_STATUS:
+   {
+    //Return statistics such as loop time, motor usage etc.
+    sendShort(robot.getLoopTime());
+   }
+   break;
+   #endif
    #ifdef LINEFOLLOW_ARRAY
    case LINEFOLLOW_ARRAY:
    {
-     if(lineFollowArray.getPort()!=port){
+     if(lineFollowArray.getPort()!=port) {
        lineFollowArray.reset(port);
-     }
+     };
 
-    if ( lineFollowArray.readSensor() ) {
-      sendByte(1); // Valid data
-      //sendByte(lineFollowArray.getRawValue());    
-      //sendByte(lineFollowArray.getPosition());
-      //sendByte(lineFollowArray.getDirection());
-    } else {
-      sendByte(0); // Invalid data
-      //sendByte(0);
-      //sendByte(0);
-      //sendByte(0);        
-    }
-   }
+     lineFollowArray.readSensor();
+     uint8_t raw = lineFollowArray.getRawValue();
+     
+     writeSerial(4);
+     writeSerial(6);
+     
+     for ( uint8_t i=0; i<6 ; i++) {
+       if (bitRead(raw,i)) writeSerial('1'); else writeSerial('0');
+     };
+   } 
+  
    #endif
   }
 }
@@ -851,7 +864,11 @@ void setup(){
   #endif
 }
 
+ 
 void loop(){
+  //first statement in loop
+  robot.loopStart();
+  
   readButtonInner(7,0);
   keyPressed = buttonSensor.pressed();
   currentTime = millis()/1000.0-lastTime;
@@ -910,4 +927,9 @@ void loop(){
         index=0;
      }
   }
+
+  //Other code here
+
+  //last statement before loop end
+  robot.loopEnd();
 }

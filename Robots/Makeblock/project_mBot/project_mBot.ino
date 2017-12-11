@@ -209,6 +209,9 @@ unsigned char prevc=0;
 boolean buttonPressed = false;
 uint8_t keyPressed = KEY_NULL;
 
+
+bool lastByteSend = false;
+
 /*
  * function list
  */
@@ -272,7 +275,8 @@ void writeHead(){
   writeSerial(0x55);
 }
 void writeEnd(){
- Serial.println(); 
+ Serial.println();
+ lastByteSend=true; 
 }
 void writeSerial(unsigned char c){
  Serial.write(c);
@@ -402,6 +406,7 @@ uint8_t* readUint8(int idx,int len){
   }
   return _receiveUint8;
 }
+
 void runModule(int device){
   //0xff 0x55 0x6 0x0 0x2 0x22 0x9 0x0 0x0 0xa 
   int port = readBuffer(6);
@@ -824,6 +829,11 @@ void readSensor(int device){
        lineFollowArray.reset(port);
      };
 
+     //Write raw value
+     //sendByte(lineFollowArray.getRawValue());
+     sendByte(lineFollowArray.getPosition()+30);
+
+     /*
      lineFollowArray.readSensor();
      uint8_t raw = lineFollowArray.getRawValue();
      
@@ -833,45 +843,73 @@ void readSensor(int device){
      for ( uint8_t i=0; i<6 ; i++) {
        if (bitRead(raw,i)) writeSerial('1'); else writeSerial('0');
      };
+     */
    } 
   
    #endif
   }
 }
 
-void setup(){
-  pinMode(13,OUTPUT);
-  digitalWrite(13,HIGH);
-  delay(300);
-  digitalWrite(13,LOW);
-  Serial.begin(115200);
-  delay(500);
-  buzzer.tone(500,50); 
-  delay(50);
-  buzzerOff();
-  ir.begin();
-  led.setpin(13);
-  led.setColor(0,0,0);
-  led.show();
-  #ifdef GYRO
-  gyro.begin();
-  #endif
-  Serial.print("Version: ");
-  Serial.println(mVersion);
-  #ifdef LEDMATRIX
-  ledMx.setBrightness(6);
-  ledMx.setColorIndex(1);
-  #endif
+
+//Scheduler provided by https://github.com/arkhipenko/TaskScheduler
+#include "TaskScheduler.h"
+
+// Callback methods prototypes
+void t1Callback();
+void t2Callback();
+void t3Callback();
+
+//Tasks
+
+//t1=Slow sensors
+Task t1(100, TASK_FOREVER, &t1Callback);
+//t2=Communication
+Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
+//t3=Actuators
+Task t3(1000, TASK_FOREVER, &t3Callback);
+
+
+void t1Callback() {
+  //Run slow sensors
+
+  if(lineFollowArray.getPort()!=1) {
+     lineFollowArray.reset(1);
+  };
+
+
+  if (lineFollowArray.readSensor()==true){
+    led.setColor(0,255,0);
+    //Serial.print("O:");
+  } else {
+    //Serial.print("E:");
+  }
+
+  return;
+  
+  uint8_t raw = lineFollowArray.getRawValue();
+  for (int i=0;i<6;i++) {
+    if (bitRead(raw,i)) 
+      Serial.print('1');
+    else
+      Serial.print('0');
+  }
+  Serial.print('\n');
 }
 
- 
-void loop(){
-  //first statement in loop
-  robot.loopStart();
-  
+//void t2Callback() {}
+
+void t2Callback() {
+  //Communication
+
+  //Check on board button is pressed
   readButtonInner(7,0);
   keyPressed = buttonSensor.pressed();
+
+  //Time sensor
   currentTime = millis()/1000.0-lastTime;
+
+
+  //IR receiver
   if(ir.decode())
   {
     irRead = ((ir.value>>8)>>8)&0xff;
@@ -897,8 +935,11 @@ void loop(){
      }
    }
   }
+
+  //Serial commands
   readSerial();
   if(isAvailable){
+    lastByteSend=false;
     unsigned char c = serialRead&0xff;
     if(c==0x55&&isStart==false){
      if(prevc==0xff){
@@ -927,9 +968,90 @@ void loop(){
         index=0;
      }
   }
+  
+}
 
-  //Other code here
+bool ledState=false;
 
+void t3Callback() {
+  //Actuators
+
+  if (ledState) {
+   led.setColor(0,0,0);
+   ledState=false;
+  } else {
+   led.setColor(255,0,0);
+   ledState=true;    
+  }
+  
+  led.show();
+  
+}
+
+Scheduler runner;
+
+void setup(){
+
+
+  //Flash on board led
+  pinMode(13,OUTPUT);
+  digitalWrite(13,HIGH);  
+  delay(300);
+  digitalWrite(13,LOW);
+  //Enable serial data transmission
+  Serial.begin(115200);
+  delay(500);
+
+  //Short buzz
+  buzzer.tone(500,50); 
+  delay(50);
+  buzzerOff();
+
+
+  //Enable IR receiver
+  //ir.begin();
+
+  //Switch leds off
+  led.setpin(13);
+  led.setColor(0,0,0);
+  led.show();
+  
+  #ifdef GYRO
+  gyro.begin();
+  #endif
+  
+  //Serial.print("Version: ");
+  //Serial.println(mVersion);
+  
+  #ifdef LEDMATRIX
+  ledMx.setBrightness(6);
+  ledMx.setColorIndex(1);
+  #endif
+
+  //Start task scheduler
+  runner.init();
+
+  runner.addTask(t1);
+  runner.addTask(t2);
+  runner.addTask(t3);
+
+  //t1 = enabled on demand
+  t1.enable();
+  t2.enable();
+  //t2.disable();
+  t3.enable();
+
+
+}
+
+void loop(){
+  //first statement in loop
+  robot.loopStart();
+
+  //t1Callback();
+  //delay(1000);
+  runner.execute();
+  
   //last statement before loop end
   robot.loopEnd();
 }

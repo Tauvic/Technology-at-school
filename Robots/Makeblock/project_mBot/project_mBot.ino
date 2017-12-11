@@ -862,7 +862,7 @@ void t3Callback();
 //Tasks
 
 //t1=Slow sensors
-Task t1(100, TASK_FOREVER, &t1Callback);
+Task t1(10, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
@@ -976,6 +976,9 @@ bool ledState=false;
 void t3Callback() {
   //Actuators
 
+  //Here we insert autonomous motor drivers
+
+  //For demo flash a light
   if (ledState) {
    led.setColor(0,0,0);
    ledState=false;
@@ -998,6 +1001,7 @@ void setup(){
   digitalWrite(13,HIGH);  
   delay(300);
   digitalWrite(13,LOW);
+  
   //Enable serial data transmission
   Serial.begin(115200);
   delay(500);
@@ -1006,7 +1010,6 @@ void setup(){
   buzzer.tone(500,50); 
   delay(50);
   buzzerOff();
-
 
   //Enable IR receiver
   //ir.begin();
@@ -1048,8 +1051,7 @@ void loop(){
   //first statement in loop
   robot.loopStart();
 
-  //t1Callback();
-  //delay(1000);
+  //Execute scheduler
   runner.execute();
   
   //last statement before loop end

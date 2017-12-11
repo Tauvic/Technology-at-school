@@ -26,7 +26,6 @@ class MeLineFollowArray : public MePort
 		uint8_t raw=0;
     int8_t weighted=0;
     bool isValidLine(uint8_t raw);
-		String fillZero(String bin);
 };
 
 #endif

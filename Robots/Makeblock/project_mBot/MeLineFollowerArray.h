@@ -1,5 +1,5 @@
-#ifndef MeLineFollowArray_h
-#define MeLineFollowArray_h
+#ifndef MeLineFollowerArray_h
+#define MeLineFollowerArray_h
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
@@ -11,13 +11,13 @@
 #include "MePort.h"
 #endif /* ME_PORT_DEFINED */
 
-class MeLineFollowArray : public MePort
+class MeLineFollowerArray : public MePort
 {    
 	public:
     //direction capabilities
     enum direction {can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward};
 
-		MeLineFollowArray();
+		MeLineFollowerArray();
     bool readSensor();
     int8_t getPosition();
     direction getDirection();

@@ -13,7 +13,8 @@
 		["w", "set motor left %n right %n","setMotor", "0", "0",{}],		
 		["w", "move %d.direction","runMove", "forward", {"encode":"{s0}"}],
 		["w", "stop","runStop",{}],
-		["R", "getLineArray %d.normalPort","getLineArray","Port1",{"encode":"{s0}"}],		
+		["r", "getLineArray %d.normalPort","getLineArray","Port1",{"encode":"{s0}"}],		
+		["r", "getRobotStatus","getRobotStatus",{}],		
 		["w", "linefollower kP=%n","runLineFollowDriver","7.2",{}]
 	],
 	"menus": {

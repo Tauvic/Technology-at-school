@@ -1,15 +1,16 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 
-#include "LineArray.h"
-#include "LineDriver.h"
 #include <MeMCore.h>
 
-LineArray lineArray;
+#include "MeLineFollowArray.h"
+#include "LineDriver.h"
+
+MeLineFollowArray lineArray;
 LineDriver lineDriver(lineArray);
 
-MeSerial se;
+//MeSerial se;
 MeRGBLed rgbled_7(7, 7==7?2:4);
 MeDCMotor motor_9(9);
 MeDCMotor motor_10(10);    
@@ -23,7 +24,7 @@ void setup(){
     rgbled_7.show();
     
     //set line sensor pin
-    lineArray.setPort(12);
+    lineArray.reset(1);
 
     lineDriver.setParams(100,0.7,0.1,5000);
 

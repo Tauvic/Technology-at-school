@@ -126,10 +126,17 @@
         runPackage(5,short2array(-leftSpeed),short2array(rightSpeed));		
     };
 
+    ext.getRobotStatus = function(nextID){
+		getPackage(nextID,28);
+	};
+	
     ext.getLineArray = function(nextID,port){
+		if(typeof port=="string"){
+			port = ports[port];
+		}
 		//L=CanGoLeft,R=CanGoRight,F=CanGoForward,B=CanGoBackward,S=CanStop,T=CanTurn
 		//port 1 , pin = 12
-		getPackage(nextID,28,port);		
+		getPackage(nextID,38,port);		
 		
 		/*
 		var now = (new Date()).getTime();
@@ -144,7 +151,7 @@
 	
 	//Set lineDriver
     ext.runLineFollowDriver = function(kP) {
-        runPackage(29,short2array(robotSpeed),float2array(kP));		
+        runPackage(39,short2array(robotSpeed),float2array(kP));		
     };		
 
     ext.runMove = function(direction) {

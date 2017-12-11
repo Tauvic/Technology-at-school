@@ -91,8 +91,8 @@ Servo servos[8];
 MeDCMotor dc;
 
 #ifdef LINEFOLLOW_ARRAY
-#include "MeLineFollowArray.h"
-MeLineFollowArray lineFollowArray;
+#include "MeLineFollowerArray.h"
+MeLineFollowerArray lineFollowerArray;
 #endif
 
 #ifdef TEMPERATURE_SENSOR
@@ -818,20 +818,21 @@ void readSensor(int device){
    case ROBOT_STATUS:
    {
     //Return statistics such as loop time, motor usage etc.
-    sendShort(robot.getLoopTime());
+    //sendShort(robot.getLoopTime());
+    sendShort(robot.getFreeMem());
    }
    break;
    #endif
    #ifdef LINEFOLLOW_ARRAY
    case LINEFOLLOW_ARRAY:
    {
-     if(lineFollowArray.getPort()!=port) {
-       lineFollowArray.reset(port);
+     if(lineFollowerArray.getPort()!=port) {
+       lineFollowerArray.reset(port);
      };
 
      //Write raw value
-     //sendByte(lineFollowArray.getRawValue());
-     sendByte(lineFollowArray.getPosition()+30);
+     //sendByte(lineFollowerArray.getRawValue());
+     sendByte(lineFollowerArray.getPosition()+30);
 
      /*
      lineFollowArray.readSensor();
@@ -872,21 +873,15 @@ Task t3(1000, TASK_FOREVER, &t3Callback);
 void t1Callback() {
   //Run slow sensors
 
-  if(lineFollowArray.getPort()!=1) {
-     lineFollowArray.reset(1);
+  if (lineFollowerArray.getPort()==0) {
+     return;
   };
 
-
-  if (lineFollowArray.readSensor()==true){
-    led.setColor(0,255,0);
-    //Serial.print("O:");
-  } else {
-    //Serial.print("E:");
-  }
+  lineFollowerArray.readSensor();
 
   return;
   
-  uint8_t raw = lineFollowArray.getRawValue();
+  uint8_t raw = lineFollowerArray.getRawValue();
   for (int i=0;i<6;i++) {
     if (bitRead(raw,i)) 
       Serial.print('1');

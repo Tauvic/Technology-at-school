@@ -2,14 +2,14 @@
 #define LineDriver_h
 
 #include <Arduino.h>
-#include "LineArray.h"
+#include "MeLineFollowArray.h"
 
 class LineDriver
 {
     
  public:
     enum actions {do_stop,do_forward,do_left,do_right}; 
-    LineDriver(LineArray sensor);
+    LineDriver(MeLineFollowArray sensor);
     void setParams(uint8_t power,float kP,float t_ratio, int t_time);
     void drive();
     void doForward();
@@ -18,7 +18,7 @@ class LineDriver
     uint8_t getLeftPower();
     uint8_t getRightPower();    
  private:
-    LineArray sensor;
+    MeLineFollowArray sensor;
     uint8_t motor_power = 0;
     float   motor_kP = 0.0;
     uint8_t motor_left = 0;

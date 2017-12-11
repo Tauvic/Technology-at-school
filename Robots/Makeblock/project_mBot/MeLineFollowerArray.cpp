@@ -1,18 +1,18 @@
-#include "MeLineFollowArray.h"
+#include "MeLineFollowerArray.h"
 
-MeLineFollowArray::MeLineFollowArray(){
+MeLineFollowerArray::MeLineFollowerArray(){
 }
 
-uint8_t MeLineFollowArray::getRawValue() {
+uint8_t MeLineFollowerArray::getRawValue() {
   return raw;
 }
 
-int8_t MeLineFollowArray::getPosition() {
+int8_t MeLineFollowerArray::getPosition() {
   return weighted;
 }
 
 
-boolean MeLineFollowArray::isValidLine(uint8_t val) {
+boolean MeLineFollowerArray::isValidLine(uint8_t val) {
   
   if (val == B00111111) return true; 
   if (val == B00111110) return true;
@@ -40,7 +40,7 @@ boolean MeLineFollowArray::isValidLine(uint8_t val) {
 }
 
 
-MeLineFollowArray::direction MeLineFollowArray::getDirection(){
+MeLineFollowerArray::direction MeLineFollowerArray::getDirection(){
 
       //Get sensor on/off reading
       //B111111 = 63 can go left and right
@@ -55,7 +55,7 @@ MeLineFollowArray::direction MeLineFollowArray::getDirection(){
       };
 }
 
-bool MeLineFollowArray::readSensor(){
+bool MeLineFollowerArray::readSensor(){
 
   long time_out_flag = 0;
   uint8_t DataPin = pin2();

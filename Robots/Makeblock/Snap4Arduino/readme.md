@@ -1,5 +1,5 @@
 
-Snap4Arduino enables access to Arduino based boards (such as Makeblock mBot)
+Snap4Arduino is a user interface based on Scratch that enables access to Arduino based boards (such as Makeblock mBot)
 
 Website: http://snap4arduino.rocks/
 

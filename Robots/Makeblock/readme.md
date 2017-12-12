@@ -2,9 +2,9 @@ Material for the Makeblock mBot robot
 
 working on:
 * Easy robot programming
-  * RoboCode Basic
-  * RoboCode Advanced
-  * RoboGrip (manus roboticus)
+  * RoboCode Basic (a robot that can do line following with a 6 sensor line sensor array)
+  * RoboCode Advanced (semi-autonomous line following robot that detects road crossings, drives with a PID controller)
+  * RoboGrip (manus roboticus, includes a gripper hand)
   * RoboVision (visis roboticus)
 * Improve editor
   * Snap4Arduino https://snap.berkeley.edu/SnapManual.pdf

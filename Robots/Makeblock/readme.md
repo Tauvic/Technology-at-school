@@ -1,4 +1,4 @@
-My vision is to use the Makeblock mBot robot as a platform for teaching technology, programming and robotics at school. To enable this I intend to make it easy to use and make it move more reliable and repeatable. To give myself a goal im working towards a robot that can d advanced line following and includes a gripper hand. The robot can pefroam task as a clerk in a warehouse driving around, picking up goods and delivering them.
+My vision is to use the Makeblock mBot robot as a platform for teaching technology, programming and robotics at school. To enable this I intend to make it easy to use and make it move more reliable and repeatable. To give myself a goal im working towards a robot that can do advanced line following and includes a gripper hand. The robot can perfom tasks as a clerk in a warehouse driving around, picking up goods and delivering them.
 
 For progress check out [projects](https://github.com/Tauvic/Technology-at-school/projects)
 

@@ -1,4 +1,4 @@
-<img align="right" width="100" height="100" src="http://www.fillmurray.com/100/100">
+<img align="right" height="200" src="./images/MeLineFollowerSensor_2.png">
 
 * Goal: Makeblock mBot robot as a platform for teaching technology, programming and robotics at school.
 * Aproach: Provide a user friendly interface to a robot that moves reliable and semi-autonomous.

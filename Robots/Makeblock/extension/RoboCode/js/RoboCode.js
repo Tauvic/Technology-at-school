@@ -134,8 +134,10 @@
 		if(typeof port=="string"){
 			port = ports[port];
 		}
-		//L=CanGoLeft,R=CanGoRight,F=CanGoForward,B=CanGoBackward,S=CanStop,T=CanTurn
-		//port 1 , pin = 12
+		
+	    responsePreprocessor[nextID] = (function(){return function(value){
+			return value - 30;
+		}})();
 		getPackage(nextID,38,port);		
 		
 		/*

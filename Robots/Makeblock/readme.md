@@ -1,9 +1,10 @@
-Material for the Makeblock mBot robot
+My vision is to use the Makeblock mBot robot as a platform for teaching technology, programming and robotics at school. To enable this I intend to make it easy to use and make it move more reliable and repeatable. To give myself a goal im working towards a robot that can d advanced line following and includes a gripper hand. The robot can pefroam task as a clerk in a warehouse driving around, picking up goods and delivering them.
 
-working on:
+For progress check out [projects](https://github.com/Tauvic/Technology-at-school/projects)
+
 * Easy robot programming
-  * RoboCode Basic (a robot that can do line following with a 6 sensor line sensor array)
-  * RoboCode Advanced (semi-autonomous line following robot that detects road crossings, drives with a PID controller)
+  * RoboCode Basic (a robot that can do basic line following with a 6 sensor line sensor array)
+  * RoboCode Advanced (semi-autonomous line following, detect road crossings, drives with a PID controller)
   * RoboGrip (manus roboticus, includes a gripper hand)
   * RoboVision (visis roboticus)
 * Improve editor

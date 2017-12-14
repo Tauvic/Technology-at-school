@@ -13,18 +13,19 @@
 
 class MeLineFollowerArray : public MePort
 {    
-	public:
+  public:
     //direction capabilities
     enum direction {can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward};
-
-		MeLineFollowerArray();
+    static const uint8_t invalid = 64;
+    MeLineFollowerArray();
     bool readSensor();
     int8_t getPosition();
     direction getDirection();
-		uint8_t getRawValue();
- private:
-		uint8_t raw=0;
-    int8_t weighted=0;
+    uint8_t getRawValue();
+  private:
+    uint8_t raw=0;
+    int8_t weighted=MeLineFollowerArray::invalid;
+    bool validReading = false;
     bool isValidLine(uint8_t raw);
 };
 

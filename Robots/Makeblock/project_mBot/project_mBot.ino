@@ -95,6 +95,11 @@ MeDCMotor dc;
 MeLineFollowerArray lineFollowerArray;
 #endif
 
+#ifdef LINEFOLLOW_DRIVER
+#include "LineDriver.h"
+LineDriver lineDriver(lineFollowerArray);
+#endif
+
 #ifdef TEMPERATURE_SENSOR
 MeTemperature ts;
 #endif
@@ -210,8 +215,6 @@ boolean buttonPressed = false;
 uint8_t keyPressed = KEY_NULL;
 
 
-bool lastByteSend = false;
-
 /*
  * function list
  */
@@ -276,7 +279,6 @@ void writeHead(){
 }
 void writeEnd(){
  Serial.println();
- lastByteSend=true; 
 }
 void writeSerial(unsigned char c){
  Serial.write(c);
@@ -319,6 +321,9 @@ void parseData(){
         dc.run(0);
         dc.reset(M2);
         dc.run(0);
+        #ifdef LINEFOLLOW_DRIVER
+        lineDriver.doNothing();
+        #endif        
         buzzerOff();
         callOK();
       }
@@ -418,6 +423,9 @@ void runModule(int device){
        dc.reset(port);
      }
      dc.run(speed);
+     #ifdef LINEFOLLOW_DRIVER
+     lineDriver.doNothing();
+     #endif
    } 
     break;
     case JOYSTICK:{
@@ -427,6 +435,9 @@ void runModule(int device){
      int rightSpeed = readShort(8);
      dc.reset(M2);
      dc.run(rightSpeed);
+     #ifdef LINEFOLLOW_DRIVER
+     lineDriver.doNothing();
+     #endif     
     }
     break;
    #ifdef RGBLED
@@ -578,6 +589,13 @@ void runModule(int device){
     lastTime = millis()/1000.0; 
    }
    break;
+   #ifdef LINEFOLLOW_DRIVER
+   case LINEFOLLOW_DRIVER:
+   {
+    lineDriver.setParams(readShort(6),readFloat(8));
+    lineDriver.doForward();
+   }
+   #endif
   }
 }
 
@@ -867,7 +885,7 @@ Task t1(10, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
-Task t3(1000, TASK_FOREVER, &t3Callback);
+Task t3(20, TASK_FOREVER, &t3Callback);
 
 
 void t1Callback() {
@@ -934,7 +952,6 @@ void t2Callback() {
   //Serial commands
   readSerial();
   if(isAvailable){
-    lastByteSend=false;
     unsigned char c = serialRead&0xff;
     if(c==0x55&&isStart==false){
      if(prevc==0xff){
@@ -966,23 +983,31 @@ void t2Callback() {
   
 }
 
-bool ledState=false;
-
 void t3Callback() {
   //Actuators
 
-  //Here we insert autonomous motor drivers
+  LineDriver::action action = lineDriver.drive();
 
-  //For demo flash a light
-  if (ledState) {
-   led.setColor(0,0,0);
-   ledState=false;
-  } else {
-   led.setColor(255,0,0);
-   ledState=true;    
+  switch (action) {
+
+    case LineDriver::do_nothing:
+       return;
+           
+    case LineDriver::do_forward:
+       led.setColor(0,255,0); //Color green 
+       break;
+       
+    case LineDriver::do_stop:
+       led.setColor(255,0,0); //Color red
+       break;        
   }
-  
+
   led.show();
+  
+  //dc.reset(M1);
+  //dc.run(lineDriver.getLeftPower());
+  //dc.reset(M2);
+  //dc.run(lineDriver.getRightPower());       
   
 }
 
@@ -1036,9 +1061,7 @@ void setup(){
   //t1 = enabled on demand
   t1.enable();
   t2.enable();
-  //t2.disable();
-  //t3.enable();
-
+  t3.enable();
 
 }
 

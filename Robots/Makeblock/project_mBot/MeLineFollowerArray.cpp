@@ -13,8 +13,8 @@ int8_t MeLineFollowerArray::getPosition() {
 
 
 boolean MeLineFollowerArray::isValidLine(uint8_t val) {
-  
-  if (val == B00111111) return true; 
+
+  if (val == B00111111) return true;
   if (val == B00111110) return true;
   if (val == B00011111) return true;
   if (val == B00111100) return true;
@@ -48,7 +48,7 @@ MeLineFollowerArray::direction MeLineFollowerArray::getDirection(){
       //B001111 = 15 can go left
 
       switch (raw) {
-         case 60: return can_right; 
+         case 60: return can_right;
          case 15: return can_left;
          case 63: return can_left_right;
          default: return can_forward;
@@ -59,10 +59,10 @@ bool MeLineFollowerArray::readSensor(){
 
   long time_out_flag = 0;
   uint8_t DataPin = pin2();
-  
+
   //Wakeup sensor
   pinMode(DataPin, OUTPUT);
- 
+
   //Send 1 mSec low bit
   digitalWrite(DataPin, LOW);
   delayMicroseconds(980);
@@ -71,8 +71,8 @@ bool MeLineFollowerArray::readSensor(){
   // Begin of time critical section        ||
   // Disable interrupts to garantee timing ||
   //noInterrupts();
-  
-  //Send 50 uSec high bit 
+
+  //Send 50 uSec high bit
   digitalWrite(DataPin, HIGH);
   delayMicroseconds(40); //40
 
@@ -111,32 +111,28 @@ bool MeLineFollowerArray::readSensor(){
           HIGH_level_read_time = micros() - HIGH_level_read_time;
           */
           uint32_t HIGH_level_read_time = pulseIn(DataPin,HIGH,250);
-         
+
           if ( ! (HIGH_level_read_time > 50 && HIGH_level_read_time < 100) )
           {
               Sensor_Data[k] |= (0x80 >> i); // Set bit high
-          }           
+          }
       }
   }
 
   //interrupts();
   // Enable interrupt processing   ||
   // End of time critical section  ||
-  // ============================= ||  
+  // ============================= ||
 
   //Final low - high
   //while(digitalRead(DataPin) == 0&&((millis() - time_out_flag) < 6));
   //while(digitalRead(DataPin) == 1&&((millis() - time_out_flag) < 6));
 
-  //Init results
-  //raw = 0;
-  //weighted = 0;
-  bool valid=false;
- 
-  if (Sensor_Data[1] == (uint8_t)(~(uint8_t)Sensor_Data[0]))
-  {
-    //The sensor reading was valid, now whe check the data
+  if (Sensor_Data[1] == (uint8_t)(~(uint8_t)Sensor_Data[0])) {
+
+    //Current sensor reading is a valid reading
     raw = Sensor_Data[0] & B00111111; // Mask lower 6 bits
+    validReading = true; // set valid reading flag
 
     //count number of high bits
     int cnt = 0;
@@ -147,15 +143,35 @@ bool MeLineFollowerArray::readSensor(){
     if ( cnt > 0 && isValidLine(raw) ) {
       //Calulate position on line by weighted average
       //Method: http://theultimatelinefollower.blogspot.nl/2015/12/interpolation.html
-      //float norm[8] = {-3.0,-1.8,-0.6,0.6,1.8,3.0};
-      // -3000 -1800 -600
+      //the sensors are spaced 6 mm this makes {-30,-18, -6, 6, 18, 30};
       weighted = (-30 * bitRead(raw,0)) + (-18 * bitRead(raw,1)) + (-6 * bitRead(raw,2)) + (6 * bitRead(raw,3)) + (18 * bitRead(raw,4)) + (30 * bitRead(raw,5));
       weighted = weighted / cnt;
-      valid = true;
-    };
+    } else {
+      //No bits set, we are not on a line
+      weighted = MeLineFollowerArray::invalid;
+    }
+  }
+  else {
+    //Current sensor reading is not valid
+    //now check the previous sensor reading
 
+    if (validReading == true) {
+
+      //Previous reading was valid
+      //we can fallback to the previous reading
+      //but we reset the valid reading flag to prevent continous reuse of this repaired data
+      validReading = false;
+      //raw and weighted are kept the same
+
+    } else {
+
+      //Previous reading was invalid
+      //We have two invalid readings in a row
+      raw = 0;
+      weighted = MeLineFollowerArray::invalid;
+    }
   }
 
-  //return status 
-  return valid;
+  //return status
+  return validReading;
 }

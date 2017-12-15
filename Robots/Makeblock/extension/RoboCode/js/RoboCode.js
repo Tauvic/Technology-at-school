@@ -126,6 +126,10 @@
         runPackage(5,short2array(-leftSpeed),short2array(rightSpeed));		
     };
 
+    ext.runStop = function() {
+		ext.setMotor(0,0);
+    };
+	
     ext.getRobotStatus = function(nextID){
 		getPackage(nextID,28);
 	};
@@ -175,11 +179,7 @@
         runPackage(5,short2array(leftSpeed),short2array(rightSpeed));		
     };
 
-	
-    ext.runStop = function() {
-		ext.runMove("stop");
-    };
-	
+		
     ext.resetAll = function(){
     	device.send([0xff, 0x55, 2, 0, 4]);
     };

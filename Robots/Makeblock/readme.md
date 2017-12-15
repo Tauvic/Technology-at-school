@@ -15,7 +15,9 @@ For progress check out [projects](https://github.com/Tauvic/Technology-at-school
 * Improve editor
   * Snap4Arduino https://snap.berkeley.edu/SnapManual.pdf
   * http://www.snap-apps.org/
-* PID controller (http://brettbeauregard.com/blog/category/pid/)
+* PID controller
+  * Arduino https://playground.arduino.cc/Code/PIDLibrary
+  * Background info (http://brettbeauregard.com/blog/category/pid/)
 * Sensors
   * Line following array
   * NXP FXAS21002C Gyroscope

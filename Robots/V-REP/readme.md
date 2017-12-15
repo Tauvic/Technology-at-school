@@ -1,4 +1,4 @@
-<img align="right" width="400" src="../images/V-REP_screenshot.png">
+<img align="right" width="400" src="./images/V-REP_screenshot.png">
 
 >The robot simulator V-REP, with integrated development environment, is based on a distributed control architecture: each object/model can be individually controlled via an embedded script, a plugin, a ROS node, a remote API client, or a custom solution. This makes V-REP very versatile and ideal for multi-robot applications. Controllers can be written in C/C++, Python, Java, Lua, Matlab or Octave.
 

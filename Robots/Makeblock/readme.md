@@ -1,6 +1,6 @@
 <img align="right" height="200" src="./images/MeLineFollowerSensor_2.png">
 
-* Goal: Provide a robot platform for teaching technology, programming and robotics at school.
+* Goal: Provide an easyto use robot platform to schools for teaching technology, programming and robotics at school.
 * Aproach: Use the Makeblock mBot robot, add a user friendly interface and make it move reliable and semi-autonomous.
 The robot can perfom tasks as a clerk in a warehouse driving around, picking up goods and delivering them.
 

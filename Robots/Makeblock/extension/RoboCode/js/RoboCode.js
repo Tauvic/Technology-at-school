@@ -134,7 +134,7 @@
 		getPackage(nextID,28);
 	};
 	
-    ext.getLineArray = function(nextID,port){
+    ext.getLineArray = function(nextID,port,mode){
 		if(typeof port=="string"){
 			port = ports[port];
 		}
@@ -142,7 +142,7 @@
 	    responsePreprocessor[nextID] = (function(){return function(value){
 			return value - 30;
 		}})();
-		getPackage(nextID,38,port);		
+		getPackage(nextID,38,port,mode);		
 		
 		/*
 		var now = (new Date()).getTime();

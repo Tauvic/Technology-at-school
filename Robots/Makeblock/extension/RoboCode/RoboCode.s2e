@@ -13,12 +13,13 @@
 		["w", "set motor left %n right %n","setMotor", "0", "0",{}],		
 		["w", "move %d.direction","runMove", "forward", {"encode":"{s0}"}],
 		["w", "stop","runStop",{}],
-		["r", "getLineArray %d.normalPort","getLineArray","Port1",{"encode":"{s0}"}],		
+		["r", "getLineArray %d.normalPort %d.lineMode","getLineArray","Port1","position",{"encode":"{d0} {d1}"}],		
 		["r", "getRobotStatus","getRobotStatus",{}],		
 		["w", "linefollower kP=%n","runLineFollowDriver","7.2",{}]
 	],
 	"menus": {
 		"mode":["start","stop"],
+		"lineMode":["position","raw"],
 		"color":["white","green","blue","yellow","orange","red","black"],
 		"speed":["slow","normal","fast"],				
 		"direction":["forward","backward","left","right","turn around","stop"],
@@ -59,6 +60,8 @@
 		"fanPorts":["Port1","Port2","Port3","Port4"]
 	},
 	"values":{
+	    "position":1,
+		"raw":2,
 		"left":2,
 		"right":1,
 		"Half":500,"Quarter":250,"Eighth":125,"Whole":1000,"Double":2000,"Zero":0,

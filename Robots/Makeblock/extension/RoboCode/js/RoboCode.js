@@ -138,10 +138,24 @@
 		if(typeof port=="string"){
 			port = ports[port];
 		}
-		
-	    responsePreprocessor[nextID] = (function(){return function(value){
-			return value - 30;
-		}})();
+
+		if (typeof mode=="string") {
+			var modes={position:1,bits:2,raw:3};
+			mode = modes[mode];
+		};
+						
+	    responsePreprocessor[nextID] = (function(mode){return function(value){
+			if (mode==1) return value - 30;
+			if (mode==2) {
+				bin='';
+				for (i=1;i<=6;i++) {
+					bin=bin+(value & 1==1?'1':'0')
+					value=value >> 1;
+				};
+				return bin;
+			}
+			return value
+		}})(mode);
 		getPackage(nextID,38,port,mode);		
 		
 		/*

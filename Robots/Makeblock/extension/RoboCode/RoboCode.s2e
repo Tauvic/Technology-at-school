@@ -19,7 +19,7 @@
 	],
 	"menus": {
 		"mode":["start","stop"],
-		"lineMode":["position","raw"],
+		"lineMode":["position","bits","raw"],
 		"color":["white","green","blue","yellow","orange","red","black"],
 		"speed":["slow","normal","fast"],				
 		"direction":["forward","backward","left","right","turn around","stop"],
@@ -61,7 +61,8 @@
 	},
 	"values":{
 	    "position":1,
-		"raw":2,
+		"bits":2,
+		"raw":3,
 		"left":2,
 		"right":1,
 		"Half":500,"Quarter":250,"Eighth":125,"Whole":1000,"Double":2000,"Zero":0,

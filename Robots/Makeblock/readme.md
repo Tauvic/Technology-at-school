@@ -4,7 +4,6 @@
 
 * Goal: Provide an easy to use robot platform to schools for teaching technology, programming and robotics.
 * Aproach: Use the Makeblock mBot robot, add a user friendly interface and make it move reliable and semi-autonomous.
-The robot can perfom tasks as a clerk in a warehouse driving around, picking up goods and delivering them.
 
 # Getting started
 
@@ -21,7 +20,7 @@ The robot can perfom tasks as a clerk in a warehouse driving around, picking up 
 
 # Development
 
-For progress check out [projects](https://github.com/Tauvic/Technology-at-school/projects)
+My idea is to develop a robot that can perfom tasks such as a clerk in a warehouse driving around, picking up goods and delivering them. to achieve that i have to improve the standard mBot robot. For progress check out [projects](https://github.com/Tauvic/Technology-at-school/projects)
 
 * Easy robot programming
   * RoboCode Basic (a robot that can do basic line following with a 6 sensor line sensor array)

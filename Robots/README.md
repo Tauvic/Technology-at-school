@@ -1,9 +1,9 @@
 <img align="right" width="300" src="../Robots/Makeblock/images/mBot-1.png">
 
-Start your journey with a simple robot [Ozobot](./Ozobot) then continue with the more advanced types such as the [mBot](./Makeblock). The V-REP simulator is a 3D World simulator that can simulate robots that can also be programmed. I use [FreeCAD](https://www.freecadweb.org/) for designing new robot parts and test them in the simulator.
+You can start your journey with a simple robot [Ozobot](./Ozobot) and then continue with the more advanced types such as the [mBot](./Makeblock). The V-REP simulator is a 3D World simulator that can simulate robots that can also be programmed. I use [FreeCAD](https://www.freecadweb.org/) for designing new robot parts and test them in the simulator.
 
 Robots:
-* [Ozobot](./Ozobot) basic robot with predefined moves and programming
+* [Ozobot](./Ozobot) basic robot (for children 4-7 years) with predefined moves and programming
 * [Makeblock](./Makeblock) mBot robot with basic to advanced programming
 * [V-REP](./V-REP) 3D world and robot simulator
 

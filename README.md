@@ -9,7 +9,7 @@
 ## Contents
 
 
-* [Robots](./Robots) - Ozobot / mBot / V-REP
-* [Programming](./Programming/README.md) - still empty
+* Learn about [Robots](./Robots) - Ozobot / mBot / V-REP
+* Learn [Programming](./Programming/README.md) - still empty
 
 

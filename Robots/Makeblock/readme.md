@@ -10,7 +10,7 @@ The robot can perfom tasks as a clerk in a warehouse driving around, picking up 
 
 * Get a robot
   * Buy a Makeblock mBot robot
-  * Use a simulated robot ([V-REP](../V-REP))
+  * If you don't have one use a simulated robot ([V-REP](../V-REP))
 * Programming
   * https://www.codingkids.nl/mBot-lessen.html
 * Read

@@ -8,7 +8,7 @@
 # Getting started
 
 * Get a robot
-  * Buy a Makeblock mBot robot
+  * Buy a [Makeblock](http://www.makeblock.com/) mBot robot
   * If you don't have one use a simulated robot ([V-REP](../V-REP))
 * Programming
   * Read [get started](./get_started)

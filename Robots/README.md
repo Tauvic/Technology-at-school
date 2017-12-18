@@ -2,7 +2,7 @@
 <img align="right" width="300" src="../Robots/Ozobot/Images/img_1031.jpg">
 
 
-You can start your journey with a simple robot [Ozobot](./Ozobot) and then continue with the more advanced types such as the [mBot](./Makeblock). For those who do not have a robot can use a simulated V-REP robot.
+You can start your journey with a simple robot [Ozobot](./Ozobot) and then continue with the more advanced types such as the [mBot](./Makeblock). For those who do not have a robot can use a simulated robot in V-REP.
 
 Robots:
 * [Ozobot](./Ozobot) basic robot (for children 4-7 years) with predefined moves and programming

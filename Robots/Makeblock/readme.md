@@ -20,6 +20,13 @@
   * [Openlab](http://openlab.makeblock.com/) for interesting projects
   * [Physcomp](https://itp.nyu.edu/physcomp/) for in depth about robot hardware and programming
 
+# Improving the robot
+
+The basic out of the box mBot robot has a motor that allows it to drive forwards, backwards and turn left or right. All these movements have to be controlled with only two parameters: power and time. 
+
+The power is specified as a number ranging form 0 to 255. To drive forward you apply electrical power to the motor and it starts. Now physics kick in, just specifiying a low value of 10 won't make your robot move slow. The robot will not move at all, this because of friction. You have to specify some minimum amount of power to get the robot moving.
+
+
 # Development
 
 My idea is to develop a robot that can perfom tasks such as a clerk in a warehouse driving around, picking up goods and delivering them. to achieve that i have to improve the standard mBot robot. For progress check out [projects](https://github.com/Tauvic/Technology-at-school/projects)

@@ -11,6 +11,7 @@
   * Buy a Makeblock mBot robot
   * If you don't have one use a simulated robot ([V-REP](../V-REP))
 * Programming
+  * Read [get started](./get_started)
   * https://www.codingkids.nl/mBot-lessen.html
 * Read
   * My blog on [robotics](https://tauvicr.wordpress.com/tag/robotics/)

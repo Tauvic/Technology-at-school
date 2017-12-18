@@ -22,9 +22,11 @@
 
 # Improving the robot
 
-The basic out of the box mBot robot has a motor that allows it to drive forwards, backwards and turn left or right. All these movements have to be controlled with only two parameters: power and time. 
+The basic out of the box mBot robot has a motor that allows it to drive forwards, backwards and turn left or right. All these movements have to be controlled with only two parameters: motor power and time. 
 
-The power is specified as a number ranging form 0 to 255. To drive forward you apply electrical power to the motor and it starts. Now physics kick in, just specifiying a low value of 10 won't make your robot move slow. The robot will not move at all, this because of friction. You have to specify some minimum amount of power to get the robot moving.
+The robot has two electircal motors, each motor drives a wheel. The motor power is specified as a number ranging form 0 to 255. To drive forward you apply electrical power to the motor (for example 100). To drive backwards you reverse the sign (-100). Now physics kick in, just specifiying a low value of 10 won't make your robot move slow. The robot will not move at all, this because of friction. You have to specify some minimum amount of power to get the robot moving. Now you want to turn lef or right. you have to drive one wheel for some time to make it turn. but for how long? Driving it too short won't make a 90 degrees turn and driving to long will make it spin around.
+
+In order to make the robot move as you wan't you have to find out how it works. Each robot has slighlty different behaviour because motors are not exactly equal and batteries loose power over time.
 
 
 # Development

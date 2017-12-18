@@ -17,7 +17,8 @@
   * My blog on [robotics](https://tauvicr.wordpress.com/tag/robotics/)
   * [mBlock (Scratch) & mBot "Rocks with the Robots"](https://cdn.shopify.com/s/files/1/1003/6824/files/mBlock_Rocks_with_Robots_Makeblockshop_Compressed_Small.pdf?12769062248011349873)"
   * [Scratch "The Adventures of Mike"](https://cdn.shopify.com/s/files/1/1003/6824/files/Scratch_2.0_The_Adventures_of_Mike_Makeblockshop_Compressed.pdf?12769062248011349873)
-  * [Openlab](http://openlab.makeblock.com/)
+  * [Openlab](http://openlab.makeblock.com/) for interesting projects
+  * [Physcomp](https://itp.nyu.edu/physcomp/) for in depth about robot hardware and programming
 
 # Development
 

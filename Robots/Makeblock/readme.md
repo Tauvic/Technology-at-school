@@ -3,7 +3,7 @@
 <img align="right" height="200" src="./images/MeLineFollowerSensor_2.png">
 
 * Goal: Provide an easy to use robot platform to schools for teaching technology, programming and robotics.
-* Aproach: Use the Makeblock mBot robot, add a user friendly interface and make it move reliable and semi-autonomous.
+* Aproach: Improve the Makeblock mBot robot: add a user friendly interface and make it move reliable and semi-autonomous.
 
 # Getting started
 

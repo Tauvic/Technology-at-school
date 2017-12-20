@@ -140,22 +140,25 @@
 		}
 
 		if (typeof mode=="string") {
-			var modes={position:1,bits:2,raw:3};
+			var modes={position:1,bits:2,raw:3,timing:4};
 			mode = modes[mode];
 		};
 						
 	    responsePreprocessor[nextID] = (function(mode){return function(value){
 			if (mode==1) return value - 30;
 			if (mode==2) {
-				bin='';
+				bits='X';
 				for (i=1;i<=6;i++) {
-					bin=bin+(value & 1==1?'1':'0')
+					bits=bits+(value & 1==1?'1':'0')
 					value=value >> 1;
 				};
-				return bin;
+				return bits;
 			}
-			return value
+			if (mode==3) return value; // raw			
+			
+			return "X"+value.charCodeAt(0)+","+value.charCodeAt(1)+","+value.charCodeAt(2)+","+value.charCodeAt(3)+","+value.charCodeAt(4)+","+value.charCodeAt(5)+","+value.charCodeAt(6);
 		}})(mode);
+				
 		getPackage(nextID,38,port,mode);		
 		
 		/*

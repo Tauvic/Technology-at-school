@@ -12,6 +12,8 @@
 #include <Wire.h>
 #include <MeMCore.h>
 
+#define TEST_MODE 1
+
 #define VERSION                0
 #define ULTRASONIC_SENSOR      1
 //#define TEMPERATURE_SENSOR     2
@@ -848,21 +850,42 @@ void readSensor(int device){
        lineFollowerArray.reset(port);
      };
 
-     //Write raw value
-     //sendByte(lineFollowerArray.getRawValue());
-     sendByte(lineFollowerArray.getPosition()+30);
+     lineFollowerArray.readSensor();
 
-     /*
-     lineFollowArray.readSensor();
-     uint8_t raw = lineFollowArray.getRawValue();
-     
-     writeSerial(4);
-     writeSerial(6);
-     
-     for ( uint8_t i=0; i<6 ; i++) {
-       if (bitRead(raw,i)) writeSerial('1'); else writeSerial('0');
-     };
-     */
+     //get mode: 1=position, 2=raw, 3=hightime
+     switch (readBuffer(7)) {
+      case 1: //Position
+        sendByte(lineFollowerArray.getPosition()+30);
+        break;
+      case 2: //Bits
+        sendByte(lineFollowerArray.getRawValue());
+        break;
+      case 3: //Raw
+        sendByte(lineFollowerArray.getRawValue());
+        break;
+      case 4: //Raw + timing
+        writeSerial(4); //Send string
+        writeSerial(7); //Send 7 byte string
+        //unsigned char buf[7] = {0,1,2,3,4,5,6};
+        writeSerial(lineFollowerArray.getRawValue());
+        //writeSerial(32);
+        unsigned long *ht = lineFollowerArray.getHighTime();
+        writeSerial(1);
+        writeSerial(2);
+        writeSerial(3);
+        writeSerial(4);
+        writeSerial(5);
+        writeSerial(6);
+
+        //uint8_t * buff= lineFollowerArray.getHighTime();
+        //for (uint8_t i=0;i<6;i++) writeSerial(buff[i]);
+        
+        //sendString("123456");
+             
+        //sendShort(lineFollowerArray.getHighTime());
+        break;
+     }
+
    } 
   
    #endif
@@ -881,7 +904,7 @@ void t3Callback();
 //Tasks
 
 //t1=Slow sensors
-Task t1(10, TASK_FOREVER, &t1Callback);
+Task t1(1000, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
@@ -897,16 +920,35 @@ void t1Callback() {
 
   lineFollowerArray.readSensor();
 
-  return;
-  
+  //return;
+
+  unsigned long startTimer = micros();
+
   uint8_t raw = lineFollowerArray.getRawValue();
+  Serial.print("pos=");
+  Serial.print(lineFollowerArray.getPosition());
+  Serial.print("raw=");
+  Serial.print(raw);
+  Serial.print(',');
   for (int i=0;i<6;i++) {
     if (bitRead(raw,i)) 
       Serial.print('1');
     else
       Serial.print('0');
   }
+  Serial.print(',');
+  unsigned long *high_time =lineFollowerArray.getHighTime();
+  for (int i=0;i<8;i++) {
+      Serial.print(high_time[i],DEC);
+      Serial.print(',');
+  }  
+  Serial.print("t=");
+  Serial.print(micros()-startTimer);
   Serial.print('\n');
+  
+  Serial.flush();
+
+  
 }
 
 //void t2Callback() {}
@@ -1051,6 +1093,7 @@ void setup(){
   ledMx.setColorIndex(1);
   #endif
 
+
   //Start task scheduler
   runner.init();
 
@@ -1060,9 +1103,10 @@ void setup(){
 
   //t1 = enabled on demand
   t1.enable();
-  t2.enable();
-  t3.enable();
+  //t2.enable();
+  //t3.enable();
 
+  lineFollowerArray.reset(1);
 }
 
 void loop(){

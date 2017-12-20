@@ -4,7 +4,7 @@ MeLineFollowerArray::MeLineFollowerArray(){
 }
 
 uint8_t MeLineFollowerArray::getRawValue() {
-  return raw;
+  return raw & B00111111;
 }
 
 int8_t MeLineFollowerArray::getPosition() {
@@ -55,9 +55,14 @@ MeLineFollowerArray::direction MeLineFollowerArray::getDirection(){
       };
 }
 
+unsigned long * MeLineFollowerArray::getHighTime(){
+  return high_time;
+}
+
 bool MeLineFollowerArray::readSensor(){
 
-  long time_out_flag = 0;
+  unsigned long time_out_start = 0;
+  bool timeout = false;
   uint8_t DataPin = pin2();
 
   //Wakeup sensor
@@ -81,41 +86,52 @@ bool MeLineFollowerArray::readSensor(){
 
   //Wait for 100 uSec low bit
   delayMicroseconds(50);
-  time_out_flag = millis();
-  while((digitalRead(DataPin) == 0)&&((millis() - time_out_flag) < 1));
+  time_out_start = micros();
+  while((digitalRead(DataPin) == 0) && ((micros() - time_out_start) < 6000));
 
   //Wait for 50 uSec high bit
-  time_out_flag = millis();
-  while((digitalRead(DataPin) == 1)&&((millis() - time_out_flag) < 1));
+  time_out_start = micros();
+  while((digitalRead(DataPin) == 1)&&((micros() - time_out_start) < 6000));
+
+  timeout = (micros() - time_out_start) > 6000 ;
 
   //Now read sensor data 3*bit MSB first
   uint8_t Sensor_Data[3];
-  for(uint8_t k=0; k<3; k++)
+  
+  for(uint8_t k=0; k<3 && timeout==false; k++)
   {
-      Sensor_Data[k] = 0x00;
+      Sensor_Data[k] = 0;
 
       //Read 8 bits
       for(uint8_t i=0;i<8;i++)
       {
 
-          /*
           //Low bit 50 uSec
-          time_out_flag = millis();
-          while(digitalRead(DataPin) == 0&&((millis() - time_out_flag) < 6));
+          time_out_start = micros();
+          while(digitalRead(DataPin) == 0 && ((micros() - time_out_start) < 1000));
 
-          //High bit pulse width 27 uSec=0, 70 uSec=1
-          uint32_t HIGH_level_read_time = micros();
-          time_out_flag = millis();
-          while(digitalRead(DataPin) == 1&&((millis() - time_out_flag) < 6));
+          //High bit pulse width 27 uSec => 0, 70 uSec => 1        
+          time_out_start = micros();
+          while(digitalRead(DataPin) == 1 && ((micros() - time_out_start) < 1000));
 
-          HIGH_level_read_time = micros() - HIGH_level_read_time;
-          */
-          uint32_t HIGH_level_read_time = pulseIn(DataPin,HIGH,250);
+          unsigned long HIGH_level_read_time = micros() - time_out_start;
+
+          if (k==0)  {
+            high_time[i] = HIGH_level_read_time; //(HIGH_level_read_time < 255) ? HIGH_level_read_time : 255;
+          }
+          
+          if (HIGH_level_read_time > 1000) {
+            timeout = true;
+            break;
+          }          
+          
+          //uint32_t HIGH_level_read_time = pulseIn(DataPin,HIGH,250);          
 
           if ( ! (HIGH_level_read_time > 50 && HIGH_level_read_time < 100) )
           {
               Sensor_Data[k] |= (0x80 >> i); // Set bit high
           }
+
       }
   }
 
@@ -125,10 +141,10 @@ bool MeLineFollowerArray::readSensor(){
   // ============================= ||
 
   //Final low - high
-  //while(digitalRead(DataPin) == 0&&((millis() - time_out_flag) < 6));
-  //while(digitalRead(DataPin) == 1&&((millis() - time_out_flag) < 6));
+  //while(digitalRead(DataPin) == 0&&((millis() - time_out_start) < 6));
+  //while(digitalRead(DataPin) == 1&&((millis() - time_out_start) < 6));
 
-  if (Sensor_Data[1] == (uint8_t)(~(uint8_t)Sensor_Data[0])) {
+  if (timeout==false && Sensor_Data[1] == (uint8_t)(~(uint8_t)Sensor_Data[0])) {
 
     //Current sensor reading is a valid reading
     raw = Sensor_Data[0] & B00111111; // Mask lower 6 bits
@@ -167,7 +183,7 @@ bool MeLineFollowerArray::readSensor(){
 
       //Previous reading was invalid
       //We have two invalid readings in a row
-      raw = 0;
+      raw = 64; //MeLineFollowerArray::invalid;
       weighted = MeLineFollowerArray::invalid;
     }
   }

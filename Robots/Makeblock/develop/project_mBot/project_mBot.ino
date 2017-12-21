@@ -12,7 +12,25 @@
 #include <Wire.h>
 #include <MeMCore.h>
 
-#define TEST_MODE 1
+//#define TEST_MODE 1
+
+//Scheduler provided by https://github.com/arkhipenko/TaskScheduler
+#include "TaskScheduler.h"
+
+// Callback methods prototypes
+void t1Callback();
+void t2Callback();
+void t3Callback();
+
+//Tasks
+
+//t1=Slow sensors
+Task t1(20, TASK_FOREVER, &t1Callback);
+//t2=Communication
+Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
+//t3=Actuators
+Task t3(20, TASK_FOREVER, &t3Callback);
+
 
 #define VERSION                0
 #define ULTRASONIC_SENSOR      1
@@ -281,6 +299,7 @@ void writeHead(){
 }
 void writeEnd(){
  Serial.println();
+ t1.enable();
 }
 void writeSerial(unsigned char c){
  Serial.write(c);
@@ -850,8 +869,13 @@ void readSensor(int device){
        lineFollowerArray.reset(port);
      };
 
-     lineFollowerArray.readSensor();
 
+     //lineFollowerArray.readSensor();
+     delayMicroseconds(250);
+     for (int i = 0; !lineFollowerArray.readSensor() && i< 10; i++) {
+      delayMicroseconds(i*250);
+     }
+     
      //get mode: 1=position, 2=raw, 3=hightime
      switch (readBuffer(7)) {
       case 1: //Position
@@ -863,26 +887,22 @@ void readSensor(int device){
       case 3: //Raw
         sendByte(lineFollowerArray.getRawValue());
         break;
-      case 4: //Raw + timing
+      case 4: //Raw + debug info
         writeSerial(4); //Send string
-        writeSerial(7); //Send 7 byte string
+        writeSerial(9); //Send 7 byte string
         //unsigned char buf[7] = {0,1,2,3,4,5,6};
         writeSerial(lineFollowerArray.getRawValue());
         //writeSerial(32);
-        unsigned long *ht = lineFollowerArray.getHighTime();
-        writeSerial(1);
-        writeSerial(2);
-        writeSerial(3);
-        writeSerial(4);
-        writeSerial(5);
-        writeSerial(6);
+        uint8_t *db = lineFollowerArray.getDebugInfo();
+        writeSerial(db[0]);
+        writeSerial(db[1]);
+        writeSerial(db[2]);
+        writeSerial(db[3]);
+        writeSerial(db[4]);
+        writeSerial(db[5]);
+        writeSerial(db[6]);
+        writeSerial(db[7]);
 
-        //uint8_t * buff= lineFollowerArray.getHighTime();
-        //for (uint8_t i=0;i<6;i++) writeSerial(buff[i]);
-        
-        //sendString("123456");
-             
-        //sendShort(lineFollowerArray.getHighTime());
         break;
      }
 
@@ -893,42 +913,28 @@ void readSensor(int device){
 }
 
 
-//Scheduler provided by https://github.com/arkhipenko/TaskScheduler
-#include "TaskScheduler.h"
-
-// Callback methods prototypes
-void t1Callback();
-void t2Callback();
-void t3Callback();
-
-//Tasks
-
-//t1=Slow sensors
-Task t1(1000, TASK_FOREVER, &t1Callback);
-//t2=Communication
-Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
-//t3=Actuators
-Task t3(20, TASK_FOREVER, &t3Callback);
 
 
 void t1Callback() {
   //Run slow sensors
 
-  if (lineFollowerArray.getPort()==0) {
-     return;
-  };
+  //Skip if there are bytes to read
+  if(Serial.available()>0) return;
+
+  //Check if we are initialised
+  if (lineFollowerArray.getPort()==0) return;
+
+  delay(1);
 
   lineFollowerArray.readSensor();
 
-  //return;
+  #ifdef TEST_MODE  
 
   unsigned long startTimer = micros();
 
   uint8_t raw = lineFollowerArray.getRawValue();
-  Serial.print("pos=");
-  Serial.print(lineFollowerArray.getPosition());
-  Serial.print("raw=");
-  Serial.print(raw);
+  Serial.print("X");
+  Serial.print(raw,DEC);
   Serial.print(',');
   for (int i=0;i<6;i++) {
     if (bitRead(raw,i)) 
@@ -936,10 +942,14 @@ void t1Callback() {
     else
       Serial.print('0');
   }
+  uint8_t *db =lineFollowerArray.getDebugInfo();
+  Serial.print(",T");  
+  Serial.print(db[0],DEC);  
+  Serial.print(",S");  
+  Serial.print(db[1],DEC);  
   Serial.print(',');
-  unsigned long *high_time =lineFollowerArray.getHighTime();
-  for (int i=0;i<8;i++) {
-      Serial.print(high_time[i],DEC);
+  for (int i=2;i<8;i++) {
+      Serial.print(db[i],DEC);
       Serial.print(',');
   }  
   Serial.print("t=");
@@ -948,6 +958,9 @@ void t1Callback() {
   
   Serial.flush();
 
+  if (raw != 0 || (db[0]==0 && db[1]==0) ) t1.disable();
+
+  #endif
   
 }
 
@@ -999,6 +1012,7 @@ void t2Callback() {
      if(prevc==0xff){
       index=1;
       isStart = true;
+      t1.disable(); // Disable sensor reading
      }
     }else{
       prevc = c;
@@ -1102,11 +1116,15 @@ void setup(){
   runner.addTask(t3);
 
   //t1 = enabled on demand
-  t1.enable();
-  //t2.enable();
+  //t1.enable();
+  #ifndef TEST_MODE
+  t2.enable();
+  #endif
   //t3.enable();
 
   lineFollowerArray.reset(1);
+  //lineFollowerArray.readSensor(); // first reading fails
+  //delay(100);
 }
 
 void loop(){

@@ -156,7 +156,7 @@
 			}
 			if (mode==3) return value; // raw			
 			
-			return "X"+value.charCodeAt(0)+","+value.charCodeAt(1)+","+value.charCodeAt(2)+","+value.charCodeAt(3)+","+value.charCodeAt(4)+","+value.charCodeAt(5)+","+value.charCodeAt(6);
+			return "X"+value.charCodeAt(0)+",T"+value.charCodeAt(1)+",S"+value.charCodeAt(2)+","+value.charCodeAt(3)+","+value.charCodeAt(4)+","+value.charCodeAt(5)+","+value.charCodeAt(6)+","+value.charCodeAt(7)+","+value.charCodeAt(8);
 		}})(mode);
 				
 		getPackage(nextID,38,port,mode);		

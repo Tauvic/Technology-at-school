@@ -21,10 +21,10 @@ class MeLineFollowerArray : public MePort
     bool readSensor();
     int8_t getPosition();
     direction getDirection();
-    unsigned long *getHighTime();
     uint8_t getRawValue();
+    uint8_t *getDebugInfo();    
   private:
-    unsigned long high_time[8];
+    uint8_t debug_info[8];
     volatile uint8_t raw=MeLineFollowerArray::invalid;
     volatile int8_t weighted=MeLineFollowerArray::invalid;
     bool validReading = false;

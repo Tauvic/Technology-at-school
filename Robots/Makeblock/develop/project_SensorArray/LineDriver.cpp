@@ -1,5 +1,5 @@
 #include "LineDriver.h"
-LineDriver::LineDriver(MeLineFollowArray _sensor){
+LineDriver::LineDriver(MeLineFollowerArray _sensor){
   sensor = _sensor;
 }
 
@@ -120,12 +120,32 @@ void LineDriver::drive() {
       motor_right = 0;
     }
 
+
+    unsigned long t= millis();
+    uint8_t raw = sensor.getRawValue();
+    t = millis()-t;
+    
+    sendDebug(",R");  
+    sendDebug(raw);      
+    uint8_t *db = sensor.getDebugInfo();
+    sendDebug(",T");  
+    sendDebug(db[0]);  
+    sendDebug(",S");  
+    sendDebug(db[1]);  
+    sendDebug(",");
+    for (int i=2;i<8;i++) {
+        sendDebug(db[i]);
+        sendDebug(",");
+    }      
+   
     sendDebug(",L=");
     sendDebug(motor_left);
     sendDebug(",R=");
     sendDebug(motor_right);         
     sendDebug(",action=");
     sendDebug(current_action);    
+    sendDebug(",tl=");
+    sendDebug(t);
     sendDebug(";\n");
   
 }

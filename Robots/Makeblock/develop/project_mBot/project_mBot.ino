@@ -871,10 +871,12 @@ void readSensor(int device){
 
 
      //lineFollowerArray.readSensor();
-     delayMicroseconds(250);
-     for (int i = 0; !lineFollowerArray.readSensor() && i< 10; i++) {
-      delayMicroseconds(i*250);
-     }
+     /*
+     int i = 1;
+     do {
+      delayMicroseconds( i * 500 );
+     } while ( lineFollowerArray.readSensor() == false and i++ < 5);
+     */
      
      //get mode: 1=position, 2=raw, 3=hightime
      switch (readBuffer(7)) {
@@ -924,9 +926,11 @@ void t1Callback() {
   //Check if we are initialised
   if (lineFollowerArray.getPort()==0) return;
 
-  delay(1);
-
-  lineFollowerArray.readSensor();
+  int i=0;
+  do {
+    delayMicroseconds( i * 500 );
+  }
+  while ( lineFollowerArray.readSensor() == false && i++ < 5);
 
   #ifdef TEST_MODE  
 
@@ -1116,7 +1120,7 @@ void setup(){
   runner.addTask(t3);
 
   //t1 = enabled on demand
-  //t1.enable();
+  t1.enable();
   #ifndef TEST_MODE
   t2.enable();
   #endif

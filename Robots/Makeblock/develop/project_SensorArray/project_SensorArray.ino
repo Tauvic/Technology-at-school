@@ -1,13 +1,12 @@
 #include <Arduino.h>
 #include <Wire.h>
-//#include <SoftwareSerial.h>
 
 #include <MeMCore.h>
 
-#include "MeLineFollowArray.h"
+#include "MeLineFollowerArray.h"
 #include "LineDriver.h"
 
-MeLineFollowArray lineArray;
+MeLineFollowerArray lineArray;
 LineDriver lineDriver(lineArray);
 
 //MeSerial se;
@@ -89,7 +88,7 @@ void loop(){
 
     //Keep the loop repeat time constant
     //the value here must be determined experimentaly
-    _delay(startTime,1.0);
+    _delay(startTime,0.01);
 }
 
 void _delay(float startTime, float seconds){

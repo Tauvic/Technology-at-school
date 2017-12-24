@@ -116,9 +116,14 @@
 		ext.runLedStrip(7, 2, ledIndex, code[0],code[1],code[2]);
 	};
 
-    ext.setSpeed = function(s) {
-		var code={ "slow":80,"normal":160,"fast":255};
-		robotSpeed = code[s];
+    ext.setSpeed = function(power) {
+
+	    if(typeof power=="string"){
+		  var code={ "slow":80,"normal":160,"fast":255};
+		  robotSpeed = code[power];
+		} else
+			robotSpeed = power;
+		
 		responseValue();
     };
 

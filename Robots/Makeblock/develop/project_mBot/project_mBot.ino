@@ -21,15 +21,17 @@
 void t1Callback();
 void t2Callback();
 void t3Callback();
+//void t4Callback();
 
 //Tasks
 
 //t1=Slow sensors
-Task t1(20, TASK_FOREVER, &t1Callback);
+Task t1(10, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
 Task t3(20, TASK_FOREVER, &t3Callback);
+//Task t4(1000, TASK_FOREVER, &t4Callback);
 
 
 #define VERSION                0
@@ -112,12 +114,12 @@ MeDCMotor dc;
 
 #ifdef LINEFOLLOW_ARRAY
 #include "MeLineFollowerArray.h"
-MeLineFollowerArray lineFollowerArray;
+MeLineFollowerArray* lineFollowerArray = 0;
 #endif
 
 #ifdef LINEFOLLOW_DRIVER
 #include "LineDriver.h"
-LineDriver lineDriver(lineFollowerArray);
+LineDriver* lineDriver = 0;
 #endif
 
 #ifdef TEMPERATURE_SENSOR
@@ -343,7 +345,7 @@ void parseData(){
         dc.reset(M2);
         dc.run(0);
         #ifdef LINEFOLLOW_DRIVER
-        lineDriver.doNothing();
+        if (lineDriver) lineDriver->doNothing();
         #endif        
         buzzerOff();
         callOK();
@@ -445,7 +447,7 @@ void runModule(int device){
      }
      dc.run(speed);
      #ifdef LINEFOLLOW_DRIVER
-     lineDriver.doNothing();
+     if (lineDriver) lineDriver->doNothing();
      #endif
    } 
     break;
@@ -457,7 +459,7 @@ void runModule(int device){
      dc.reset(M2);
      dc.run(rightSpeed);
      #ifdef LINEFOLLOW_DRIVER
-     lineDriver.doNothing();
+     if (lineDriver) lineDriver->doNothing();
      #endif     
     }
     break;
@@ -613,8 +615,12 @@ void runModule(int device){
    #ifdef LINEFOLLOW_DRIVER
    case LINEFOLLOW_DRIVER:
    {
-    lineDriver.setParams(readShort(6),readFloat(8));
-    lineDriver.doForward();
+    if (!lineDriver) {
+      if (!lineFollowerArray) return;
+      lineDriver = new LineDriver(lineFollowerArray);
+    }
+    lineDriver->setParams(readShort(6),readFloat(8));
+    lineDriver->doForward();
    }
    #endif
   }
@@ -865,37 +871,28 @@ void readSensor(int device){
    #ifdef LINEFOLLOW_ARRAY
    case LINEFOLLOW_ARRAY:
    {
-     if(lineFollowerArray.getPort()!=port) {
-       lineFollowerArray.reset(port);
-     };
-
-
-     //lineFollowerArray.readSensor();
-     /*
-     int i = 1;
-     do {
-      delayMicroseconds( i * 500 );
-     } while ( lineFollowerArray.readSensor() == false and i++ < 5);
-     */
+     if (!lineFollowerArray) lineFollowerArray = new MeLineFollowerArray();
      
-     //get mode: 1=position, 2=raw, 3=hightime
+     if(lineFollowerArray->getPort()!=port) {
+       lineFollowerArray->reset(port);
+     };
+     
+     //get mode: 1=position, 2=bits, 3=raw, 4=debug
      switch (readBuffer(7)) {
       case 1: //Position
-        sendByte(lineFollowerArray.getPosition()+30);
+        sendByte(lineFollowerArray->getPosition()+30);
         break;
       case 2: //Bits
-        sendByte(lineFollowerArray.getRawValue());
+        sendByte(lineFollowerArray->getRawValue());
         break;
       case 3: //Raw
-        sendByte(lineFollowerArray.getRawValue());
+        sendByte(lineFollowerArray->getRawValue());
         break;
       case 4: //Raw + debug info
         writeSerial(4); //Send string
         writeSerial(9); //Send 7 byte string
-        //unsigned char buf[7] = {0,1,2,3,4,5,6};
-        writeSerial(lineFollowerArray.getRawValue());
-        //writeSerial(32);
-        uint8_t *db = lineFollowerArray.getDebugInfo();
+        writeSerial(lineFollowerArray->getRawValue());
+        uint8_t *db = lineFollowerArray->getDebugInfo();
         writeSerial(db[0]);
         writeSerial(db[1]);
         writeSerial(db[2]);
@@ -920,23 +917,26 @@ void readSensor(int device){
 void t1Callback() {
   //Run slow sensors
 
-  //Skip if there are bytes to read
+  //Check if we have a proper initialised line follower array
+  if ( lineFollowerArray==0 || lineFollowerArray->getPort()==0 ) return;
+
+  //Skip if there are bytes to read because it interferes with sensor reading
   if(Serial.available()>0) return;
 
-  //Check if we are initialised
-  if (lineFollowerArray.getPort()==0) return;
+  lineFollowerArray->readSensor();
 
-  int i=0;
-  do {
-    delayMicroseconds( i * 500 );
-  }
-  while ( lineFollowerArray.readSensor() == false && i++ < 5);
+}
+
+void t4Callback() {
 
   #ifdef TEST_MODE  
 
+  //Check if we have a proper initialised line follower array
+  if ( lineFollowerArray==0 || lineFollowerArray->getPort()==0 ) return;
+
   unsigned long startTimer = micros();
 
-  uint8_t raw = lineFollowerArray.getRawValue();
+  uint8_t raw = lineFollowerArray->getRawValue();
   Serial.print("X");
   Serial.print(raw,DEC);
   Serial.print(',');
@@ -946,7 +946,7 @@ void t1Callback() {
     else
       Serial.print('0');
   }
-  uint8_t *db =lineFollowerArray.getDebugInfo();
+  uint8_t *db =lineFollowerArray->getDebugInfo();
   Serial.print(",T");  
   Serial.print(db[0],DEC);  
   Serial.print(",S");  
@@ -958,14 +958,13 @@ void t1Callback() {
   }  
   Serial.print("t=");
   Serial.print(micros()-startTimer);
+  Serial.print(",l=");
+  Serial.print((uint16_t) lineFollowerArray);
   Serial.print('\n');
   
-  Serial.flush();
-
-  if (raw != 0 || (db[0]==0 && db[1]==0) ) t1.disable();
+   //if (raw != 0 || (db[0]==0 && db[1]==0) ) t1.disable();
 
   #endif
-  
 }
 
 //void t2Callback() {}
@@ -1046,7 +1045,9 @@ void t2Callback() {
 void t3Callback() {
   //Actuators
 
-  LineDriver::action action = lineDriver.drive();
+  if (lineDriver == 0) return;
+
+  LineDriver::action action = lineDriver->drive();
 
   switch (action) {
 
@@ -1063,10 +1064,10 @@ void t3Callback() {
   }
 
   led.show();
-  
-  //dc.reset(M1);
+
+  dc.reset(M1);
   //dc.run(lineDriver.getLeftPower());
-  //dc.reset(M2);
+  dc.reset(M2);
   //dc.run(lineDriver.getRightPower());       
   
 }
@@ -1094,9 +1095,9 @@ void setup(){
   //Enable IR receiver
   //ir.begin();
 
-  //Switch leds off
+  //Switch leds to blue
   led.setpin(13);
-  led.setColor(0,0,0);
+  led.setColor(0,0,255);
   led.show();
   
   #ifdef GYRO
@@ -1119,16 +1120,17 @@ void setup(){
   runner.addTask(t2);
   runner.addTask(t3);
 
-  //t1 = enabled on demand
   t1.enable();
-  #ifndef TEST_MODE
   t2.enable();
-  #endif
-  //t3.enable();
+  t3.enable();
 
-  lineFollowerArray.reset(1);
-  //lineFollowerArray.readSensor(); // first reading fails
-  //delay(100);
+/*
+  lineFollowerArray = new MeLineFollowerArray();
+  lineFollowerArray->reset(1);
+  lineDriver = new LineDriver(lineFollowerArray);
+  lineDriver->setParams(80,0.5);
+  lineDriver->doForward();
+*/  
 }
 
 void loop(){

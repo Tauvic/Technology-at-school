@@ -42,6 +42,10 @@ boolean MeLineFollowerArray::isValidLine(uint8_t val) {
 
 MeLineFollowerArray::direction MeLineFollowerArray::getDirection(){
 
+  //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
+
+      if ( !validReading ) return can_nowhere;
+      
       //Get sensor on/off reading
       //B111111 = 63 can go left and right
       //B111100 = 60 can go right

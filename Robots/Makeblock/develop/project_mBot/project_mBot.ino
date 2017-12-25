@@ -31,7 +31,7 @@ Task t1(20, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
-Task t3(20, TASK_FOREVER, &t3Callback);
+Task t3(50, TASK_FOREVER, &t3Callback);
 //Task t4(1000, TASK_FOREVER, &t4Callback);
 
 

@@ -1,6 +1,7 @@
 #ifndef LineDriver_h
 #define LineDriver_h
 
+#include "Globals.h"
 #include <Arduino.h>
 #include "MeLineFollowerArray.h"
 

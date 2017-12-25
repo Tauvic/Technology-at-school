@@ -2,6 +2,7 @@
 #define MeLineFollowerArray_h
 
 /* Includes ------------------------------------------------------------------*/
+#include "Globals.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <Arduino.h>

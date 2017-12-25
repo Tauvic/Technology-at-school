@@ -67,7 +67,7 @@ bool MeLineFollowerArray::readSensor(){
 
   unsigned long time_out_start = 0;
   bool timeout = false;
-  uint8_t DataPin = 12; //pin2(); // 12
+  uint8_t DataPin = pin2(); // 12
 
   //Wakeup sensor
   pinMode(DataPin, OUTPUT);

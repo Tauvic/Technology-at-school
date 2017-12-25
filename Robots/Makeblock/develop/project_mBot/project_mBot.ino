@@ -9,12 +9,13 @@
 * Copyright (C) 2013 - 2016 Maker Works Technology Co., Ltd. All right reserved.
 * http://www.makeblock.cc/
 **************************************************************************/
+
+#include "Globals.h"
 #include <Wire.h>
 #include <MeMCore.h>
 
-//#define TEST_MODE 1
-
 //Scheduler provided by https://github.com/arkhipenko/TaskScheduler
+#define _TASK_TIMECRITICAL
 #include "TaskScheduler.h"
 
 // Callback methods prototypes
@@ -26,7 +27,7 @@ void t3Callback();
 //Tasks
 
 //t1=Slow sensors
-Task t1(10, TASK_FOREVER, &t1Callback);
+Task t1(20, TASK_FOREVER, &t1Callback);
 //t2=Communication
 Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
 //t3=Actuators
@@ -863,8 +864,9 @@ void readSensor(int device){
    case ROBOT_STATUS:
    {
     //Return statistics such as loop time, motor usage etc.
-    //sendShort(robot.getLoopTime());
-    sendShort(robot.getFreeMem());
+    //sendShort(robot.getLoopTime()); 
+    //sendShort(robot.getFreeMem()); // Free memory
+    sendShort(t3.getStartDelay()); // driver delay
    }
    break;
    #endif
@@ -927,47 +929,6 @@ void t1Callback() {
 
 }
 
-void t4Callback() {
-
-  #ifdef TEST_MODE  
-
-  //Check if we have a proper initialised line follower array
-  if ( lineFollowerArray==0 || lineFollowerArray->getPort()==0 ) return;
-
-  unsigned long startTimer = micros();
-
-  uint8_t raw = lineFollowerArray->getRawValue();
-  Serial.print("X");
-  Serial.print(raw,DEC);
-  Serial.print(',');
-  for (int i=0;i<6;i++) {
-    if (bitRead(raw,i)) 
-      Serial.print('1');
-    else
-      Serial.print('0');
-  }
-  uint8_t *db =lineFollowerArray->getDebugInfo();
-  Serial.print(",T");  
-  Serial.print(db[0],DEC);  
-  Serial.print(",S");  
-  Serial.print(db[1],DEC);  
-  Serial.print(',');
-  for (int i=2;i<8;i++) {
-      Serial.print(db[i],DEC);
-      Serial.print(',');
-  }  
-  Serial.print("t=");
-  Serial.print(micros()-startTimer);
-  Serial.print(",l=");
-  Serial.print((uint16_t) lineFollowerArray);
-  Serial.print('\n');
-  
-   //if (raw != 0 || (db[0]==0 && db[1]==0) ) t1.disable();
-
-  #endif
-}
-
-//void t2Callback() {}
 
 void t2Callback() {
   //Communication
@@ -1065,10 +1026,12 @@ void t3Callback() {
 
   led.show();
 
+#ifdef DO_DRIVE
   dc.reset(M1);
-  //dc.run(lineDriver.getLeftPower());
+  dc.run(lineDriver->getLeftPower());
   dc.reset(M2);
-  //dc.run(lineDriver.getRightPower());       
+  dc.run(lineDriver->getRightPower());
+#endif       
   
 }
 
@@ -1124,13 +1087,13 @@ void setup(){
   t2.enable();
   t3.enable();
 
-/*
+#ifdef TEST_MODE
   lineFollowerArray = new MeLineFollowerArray();
   lineFollowerArray->reset(1);
   lineDriver = new LineDriver(lineFollowerArray);
   lineDriver->setParams(80,0.5);
   lineDriver->doForward();
-*/  
+#endif  
 }
 
 void loop(){

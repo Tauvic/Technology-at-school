@@ -1,6 +1,7 @@
 #ifndef Robot_h
 #define Robot_h
 
+#include "Globals.h"
 #include <Arduino.h>
 
 class Robot {

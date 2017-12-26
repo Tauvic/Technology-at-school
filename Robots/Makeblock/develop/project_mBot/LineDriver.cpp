@@ -18,8 +18,8 @@ void LineDriver::doNothing() {
   current_action = do_nothing;
 }
 
-void LineDriver::doForward() {
-  current_action = do_forward;
+void LineDriver::doFollowLine() {
+  current_action = do_followline;
 }
 
 
@@ -35,79 +35,115 @@ int LineDriver::getRightPower() {
   return motor_right;
 }
 
+int LineDriver::getEventCount() {
+  return events.size();
+}
+
+LineDriver::event LineDriver::popEvent() {
+  return events.pop();
+}
+
 
 LineDriver::action LineDriver::drive() {
 
-  if (current_action == do_nothing || sensor == 0) return do_nothing;
+  switch (current_action) {
+    case do_nothing:
+       break;
 
-#ifdef TEST_MODE
-  if (true || millis() % 1000 == 0) {
-    uint8_t raw = sensor->getRawValue();
-    Serial.print("R");
-    Serial.print(raw,DEC);
-    Serial.print(',');
-    for (int i=0;i<6;i++) {
-      if (bitRead(raw,i)) 
-        Serial.print('1');
-      else
-        Serial.print('0');
-    }
-    uint8_t *db =sensor->getDebugInfo();
-    Serial.print(",T");  
-    Serial.print(db[0],DEC);  
-    Serial.print(",S");  
-    Serial.print(db[1],DEC);  
-    Serial.print(',');
-    for (int i=2;i<8;i++) {
-        Serial.print(db[i],DEC);
-        Serial.print(',');
-    }
-    Serial.print(",D=");
-    Serial.print(sensor->getDirection());
-  }   
-#endif
-
-  //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
-  switch ( sensor->getDirection() ) {
-
-      case MeLineFollowerArray::can_left_right: 
-      case MeLineFollowerArray::can_left: 
-      case MeLineFollowerArray::can_right: 
-        {
-          current_action = do_stop;
-          motor_left = 0;
-          motor_right = 0;          
-          break;
-        }
+    case do_right:
+      //check for timeout
+      if (true || millis() - action_timer < 5000) {
+        //If we see the line then follow else keep on turning
+        if ( abs(sensor->getPosition()) <= 32 ) current_action = do_followline;
+      }
+      else {
+        //current_action = do_stop;
+        //motor_left = 0;
+        //motor_right = 0;        
+      }
       
-    
-      case MeLineFollowerArray::can_forward: 
-        {
-          int8_t delta = sensor->getPosition(); //Delta is difference in mm             
-          int correction = delta * motor_kP;
-          motor_left  = motor_power + correction;
-          motor_right = motor_power - correction;
-          current_action = do_forward;     
-        
-          #ifdef TEST_MODE
-                if (true || millis() % 1000 == 0) {
-                  Serial.print(",d=");
-                  Serial.print(delta);
-                  Serial.print(",k=");
-                  Serial.print(motor_kP);
-                  Serial.print(",c=");
-                  Serial.print(correction);
-                } 
-          #endif
-          
-          break;
-        }
 
-      default: 
-        current_action = do_stop;
-        motor_left = 0;
-        motor_right = 0;
+    case do_followline:
+
+      #ifdef TEST_MODE
+        if (true || millis() % 1000 == 0) {
+          uint8_t raw = sensor->getRawValue();
+          Serial.print("R");
+          Serial.print(raw,DEC);
+          Serial.print(',');
+          for (int i=0;i<6;i++) {
+            if (bitRead(raw,i)) 
+              Serial.print('1');
+            else
+              Serial.print('0');
+          }
+          uint8_t *db =sensor->getDebugInfo();
+          Serial.print(",T");  
+          Serial.print(db[0],DEC);  
+          Serial.print(",S");  
+          Serial.print(db[1],DEC);  
+          Serial.print(',');
+          for (int i=2;i<8;i++) {
+              Serial.print(db[i],DEC);
+              Serial.print(',');
+          }
+          Serial.print(",D=");
+          Serial.print(sensor->getDirection());
+        }   
+      #endif
+    
+      //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
+      switch ( sensor->getDirection() ) {
+    
+          case MeLineFollowerArray::can_left_right: 
+          case MeLineFollowerArray::can_right: 
+            {
+              current_action = do_right;
+              action_timer = millis(); // Start timer
+              int correction = 50;
+              motor_left  = motor_power + correction;
+              motor_right = motor_power - correction;
+              break;
+            }
+          
+          case MeLineFollowerArray::can_left: 
+            {
+              current_action = do_stop;
+              motor_left = 0;
+              motor_right = 0;          
+              break;
+            }
+        
+          case MeLineFollowerArray::can_forward: 
+            {
+              int8_t delta = sensor->getPosition(); //Delta is difference in mm             
+              int correction = delta * motor_kP;
+              motor_left  = motor_power + correction;
+              motor_right = motor_power - correction;
+              current_action = do_followline;     
+            
+              #ifdef TEST_MODE
+                    if (true || millis() % 1000 == 0) {
+                      Serial.print(",d=");
+                      Serial.print(delta);
+                      Serial.print(",k=");
+                      Serial.print(motor_kP);
+                      Serial.print(",c=");
+                      Serial.print(correction);
+                    } 
+              #endif
+              
+              break;
+            }
+    
+          default: 
+            current_action = do_stop;
+            motor_left = 0;
+            motor_right = 0;
+      }
+
   }
+
 
 #ifdef TEST_MODE
   if (true || millis() % 1000 == 0) {
@@ -121,5 +157,10 @@ LineDriver::action LineDriver::drive() {
   }
 #endif    
 
-    return current_action;
+  //Store event in blackbox
+  event ev = events.last();
+  uint8_t raw = sensor->getRawValue();
+  if (raw != ev.raw || ev.action != current_action) events.push(event{millis(),raw,current_action});
+    
+  return current_action;
 }

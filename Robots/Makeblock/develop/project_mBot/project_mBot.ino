@@ -621,7 +621,7 @@ void runModule(int device){
       lineDriver = new LineDriver(lineFollowerArray);
     }
     lineDriver->setParams(readShort(6),readFloat(8));
-    lineDriver->doForward();
+    lineDriver->doFollowLine();
    }
    #endif
   }
@@ -906,6 +906,28 @@ void readSensor(int device){
 
         break;
      }
+     #ifdef LINEFOLLOW_DRIVER
+     case LINEFOLLOW_DRIVER:
+     {
+      //Return blackbox data
+      writeSerial(4); //Send string
+      
+      if (!lineDriver) {
+        writeSerial(0); //Send 0 byte string
+        return;
+      }
+
+      int cnt = lineDriver->getEventCount();
+      writeSerial(cnt * 2);
+      for (int i=0; i < cnt;i++) {
+        LineDriver::event ev = lineDriver->popEvent();
+        //to-do: serialize time
+        writeSerial(ev.raw);
+        writeSerial(ev.action);
+      }
+      
+     }
+     #endif
 
    } 
   
@@ -1015,8 +1037,16 @@ void t3Callback() {
     case LineDriver::do_nothing:
        return;
            
-    case LineDriver::do_forward:
+    case LineDriver::do_followline:
        led.setColor(0,255,0); //Color green 
+       break;
+
+    case LineDriver::do_left:
+       led.setColorAt(1,255,128,0); 
+       break;
+
+    case LineDriver::do_right:
+       led.setColorAt(0,255,128,0); 
        break;
        
     case LineDriver::do_stop:

@@ -152,7 +152,7 @@
 	    responsePreprocessor[nextID] = (function(mode){return function(value){
 			if (mode==1) return value - 30;
 			if (mode==2) {
-				bits='X';
+				var bits='X';
 				for (i=1;i<=6;i++) {
 					bits=bits+(value & 1==1?'1':'0')
 					value=value >> 1;
@@ -182,6 +182,22 @@
         runPackage(39,short2array(robotSpeed),float2array(kP));		
     };		
 
+	//Set lineDriver
+    ext.getLineFollowDriver = function(nextID) {
+		port = 1; //dummy not used
+		
+	    responsePreprocessor[nextID] = (function(){return function(value){
+			var cnt = value.length;
+			var str='';
+			for (i=0;i<cnt;i++) {
+				str=str+value.charCodeAt(i)+','
+			};
+			return str;
+		}})();
+		
+		getPackage(nextID,39,port);		
+    };		
+	
     ext.runMove = function(direction) {
 		var leftSpeed = 0;
 		var rightSpeed = 0;
@@ -583,6 +599,7 @@
     var inputArray = [];
 	var _isParseStart = false;
 	var _isParseStartIndex = 0;
+	
     function processData(bytes) {
 		var len = bytes.length;
 		if(_rxBuf.length>30){

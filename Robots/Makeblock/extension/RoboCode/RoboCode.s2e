@@ -1,7 +1,7 @@
 {	"extensionName": "RoboCode",
     "description":"RoboCode for semi-autonomous mBot",
 	"extensionPort": 0,
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"author": "Tauvic Ritter",
 	"homepage": "https://github.com/Tauvic/Technology-at-school/tree/master/Robots/Makeblock",	
 	"sort":2,

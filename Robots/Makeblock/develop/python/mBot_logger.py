@@ -9,8 +9,6 @@ from pywinusb import hid
 # handler called when a report is received
 def rx_handler(data):
     l = len(data)
-    show = Set(string.printable)
-    show.difference_update(string.whitespace)
     for x in data:
       if (x == ord('@')):  
           sys.stdout.write('\n')
@@ -64,7 +62,7 @@ if __name__ == '__main__':
                     out_report.send(my_buffer)
                     device.close()
         except KeyboardInterrupt:
-            print "Bye"
+            print "\nBye"
             device.close
             sys.exit()
 

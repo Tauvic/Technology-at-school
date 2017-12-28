@@ -45,6 +45,18 @@ LineDriver::event LineDriver::popEvent() {
 
 
 LineDriver::action LineDriver::drive() {
+  
+#if defined (LOG_SENSOR) && LOG_LEVEL >= LOG_INFO
+  Serial.print("@A,");
+  Serial.print(millis());
+  uint8_t raw = sensor->getRawValue();
+  Serial.print(",v");
+  Serial.print(raw,DEC);
+  Serial.print(",d");
+  Serial.print(sensor->getDirection());  
+  Serial.print(",a");
+  Serial.print(current_action);  
+#endif 
 
   switch (current_action) {
     case do_nothing:
@@ -64,33 +76,6 @@ LineDriver::action LineDriver::drive() {
       
 
     case do_followline:
-
-      #ifdef TEST_MODE
-        if (true || millis() % 1000 == 0) {
-          uint8_t raw = sensor->getRawValue();
-          Serial.print("R");
-          Serial.print(raw,DEC);
-          Serial.print(',');
-          for (int i=0;i<6;i++) {
-            if (bitRead(raw,i)) 
-              Serial.print('1');
-            else
-              Serial.print('0');
-          }
-          uint8_t *db =sensor->getDebugInfo();
-          Serial.print(",T");  
-          Serial.print(db[0],DEC);  
-          Serial.print(",S");  
-          Serial.print(db[1],DEC);  
-          Serial.print(',');
-          for (int i=2;i<8;i++) {
-              Serial.print(db[i],DEC);
-              Serial.print(',');
-          }
-          Serial.print(",D=");
-          Serial.print(sensor->getDirection());
-        }   
-      #endif
     
       //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
       switch ( sensor->getDirection() ) {
@@ -122,15 +107,13 @@ LineDriver::action LineDriver::drive() {
               motor_right = motor_power - correction;
               current_action = do_followline;     
             
-              #ifdef TEST_MODE
-                    if (true || millis() % 1000 == 0) {
-                      Serial.print(",d=");
+              #if defined (LOG_ACTUATOR) && LOG_LEVEL>=LOG_DEBUG
+                      Serial.print(",e");
                       Serial.print(delta);
-                      Serial.print(",k=");
+                      Serial.print(",k");
                       Serial.print(motor_kP);
-                      Serial.print(",c=");
+                      Serial.print(",c");
                       Serial.print(correction);
-                    } 
               #endif
               
               break;
@@ -144,23 +127,22 @@ LineDriver::action LineDriver::drive() {
 
   }
 
+#if defined (LOG_ACTUATOR) && LOG_LEVEL>=LOG_INFO
+  Serial.print(",l");
+  Serial.print(motor_left);
+  Serial.print(",r");
+  Serial.print(motor_right);         
+  Serial.print(",a");
+  Serial.print(current_action);
+#endif
 
-#ifdef TEST_MODE
-  if (true || millis() % 1000 == 0) {
-    Serial.print(",L=");
-    Serial.print(motor_left);
-    Serial.print(",R=");
-    Serial.print(motor_right);         
-    Serial.print(",action=");
-    Serial.print(current_action);  
-    Serial.print(";\n");  
-  }
+#if ( defined (LOG_SENSOR) || defined (LOG_ACTUATOR) ) && LOG_LEVEL >= LOG_INFO 
+  Serial.print(";\n");
 #endif    
 
   //Store event in blackbox
-  event ev = events.last();
-  uint8_t raw = sensor->getRawValue();
-  if (raw != ev.raw || ev.action != current_action) events.push(event{millis(),raw,current_action});
+  //event ev = events.last();
+  //if (raw != ev.raw || ev.action != current_action) events.push(event{millis(),raw,current_action});
     
   return current_action;
 }

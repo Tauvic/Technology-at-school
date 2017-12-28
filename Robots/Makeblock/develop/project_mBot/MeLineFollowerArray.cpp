@@ -45,17 +45,16 @@ MeLineFollowerArray::direction MeLineFollowerArray::getDirection(){
   //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
 
       if ( !validReading ) return can_nowhere;
-      
-      //Get sensor on/off reading
-      //B111111 = 63 can go left and right
-      //B111100 = 60 can go right
-      //B001111 = 15 can go left
 
       switch (raw) {
-         case 60: return can_right;
-         case 15: return can_left;
-         case 63: return can_left_right;
-         default: return can_forward;
+         case 0: return can_nowhere;
+         case B111111: return can_left_right;
+         case B111110: return can_right;
+         case B111100: return can_right;
+         case B011111: return can_left;
+         case B001111: return can_left;
+         default: 
+            return can_forward;
       };
 }
 
@@ -166,6 +165,33 @@ bool MeLineFollowerArray::readSensor(){
       weighted = 64;
       raw = 64;
   }
+
+#if defined (LOG_SENSOR) && LOG_LEVEL >= LOG_INFO 
+  Serial.print("@S,");
+  Serial.print(millis());
+  Serial.print(",v");
+  Serial.print(raw,DEC);
+  Serial.print(",b");
+  for (int i=0;i<6;i++) {
+    if (bitRead(raw,i)) 
+      Serial.print('1');
+    else
+      Serial.print('0');
+  }  
+  Serial.print(",d");
+  Serial.print(getDirection());  
+#if LOG_LEVEL >= LOG_DEBUG
+  Serial.print(",t");  
+  Serial.print(debug_info[0],DEC);  
+  Serial.print(",s");  
+  Serial.print(debug_info[1],DEC);  
+  for (int i=2;i<8;i++) {
+      Serial.print(',');
+      Serial.print(debug_info[i],DEC);
+  }
+#endif
+  Serial.print('\n');
+#endif   
 
   return validReading;
 

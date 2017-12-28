@@ -10,7 +10,7 @@
 * http://www.makeblock.cc/
 **************************************************************************/
 
-#include "Globals.h"
+#include "config.h"
 #include <Wire.h>
 #include <MeMCore.h>
 
@@ -19,20 +19,20 @@
 #include "TaskScheduler.h"
 
 // Callback methods prototypes
-void t1Callback();
-void t2Callback();
-void t3Callback();
+void t01Callback();
+void t02Callback();
+void t99Callback();
 //void t4Callback();
 
 //Tasks
 
-//t1=Slow sensors
-Task t1(20, TASK_FOREVER, &t1Callback);
-//t2=Communication
-Task t2(TASK_IMMEDIATE, TASK_FOREVER, &t2Callback);
-//t3=Actuators
-Task t3(50, TASK_FOREVER, &t3Callback);
+//t01=Slow sensors
+Task t01(20, TASK_FOREVER, &t01Callback);
+//t02=Actuators
+Task t02(50, TASK_FOREVER, &t02Callback);
 //Task t4(1000, TASK_FOREVER, &t4Callback);
+//t99=Communication
+Task t99(TASK_IMMEDIATE, TASK_FOREVER, &t99Callback);
 
 
 #define VERSION                0
@@ -302,7 +302,7 @@ void writeHead(){
 }
 void writeEnd(){
  Serial.println();
- t1.enable();
+ //t01.enable();
 }
 void writeSerial(unsigned char c){
  Serial.write(c);
@@ -866,7 +866,7 @@ void readSensor(int device){
     //Return statistics such as loop time, motor usage etc.
     //sendShort(robot.getLoopTime()); 
     //sendShort(robot.getFreeMem()); // Free memory
-    sendShort(t3.getStartDelay()); // driver delay
+    sendShort(t02.getStartDelay()); // driver delay
    }
    break;
    #endif
@@ -938,7 +938,7 @@ void readSensor(int device){
 
 
 
-void t1Callback() {
+void t01Callback() {
   //Run slow sensors
 
   //Check if we have a proper initialised line follower array
@@ -952,7 +952,7 @@ void t1Callback() {
 }
 
 
-void t2Callback() {
+void t99Callback() {
   //Communication
 
   //Check on board button is pressed
@@ -998,7 +998,7 @@ void t2Callback() {
      if(prevc==0xff){
       index=1;
       isStart = true;
-      t1.disable(); // Disable sensor reading
+      //t01.disable(); // Disable sensor reading
      }
     }else{
       prevc = c;
@@ -1025,7 +1025,7 @@ void t2Callback() {
   
 }
 
-void t3Callback() {
+void t02Callback() {
   //Actuators
 
   if (lineDriver == 0) return;
@@ -1056,7 +1056,7 @@ void t3Callback() {
 
   led.show();
 
-#ifdef DO_DRIVE
+#if DO_DRIVE==1
   dc.reset(M1);
   dc.run(lineDriver->getLeftPower());
   dc.reset(M2);
@@ -1109,21 +1109,25 @@ void setup(){
   //Start task scheduler
   runner.init();
 
-  runner.addTask(t1);
-  runner.addTask(t2);
-  runner.addTask(t3);
+  runner.addTask(t01);
+  runner.addTask(t02);
+  runner.addTask(t99);
 
-  t1.enable();
-  t2.enable();
-  t3.enable();
+  t01.enable();
+  t02.enable();
+  t99.enable();
 
-#ifdef TEST_MODE
+#if TEST_MODE==1
+  //create line sensor array
   lineFollowerArray = new MeLineFollowerArray();
   lineFollowerArray->reset(1);
+  //create line driver
   lineDriver = new LineDriver(lineFollowerArray);
-  lineDriver->setParams(80,0.5);
-  lineDriver->doForward();
+  //set speed and Kp
+  lineDriver->setParams(80,3.0);
+  lineDriver->doFollowLine();
 #endif  
+
 }
 
 void loop(){

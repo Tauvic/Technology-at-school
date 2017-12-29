@@ -1,6 +1,6 @@
 Under construction
 
-<img align="right" width="300" src="https://camo.githubusercontent.com/257d577130dfd38be739e8e27dff141e5f213005/687474703a2f2f692e696d6775722e636f6d2f7842753776495a2e706e67">
+<a href="https://www.youtube.com/watch?v=VoJbqqw680c"><img align="right" width="400" src="https://camo.githubusercontent.com/257d577130dfd38be739e8e27dff141e5f213005/687474703a2f2f692e696d6775722e636f6d2f7842753776495a2e706e67"></a>
 
 [The Young Person's Guide to Programming in Minecraft](https://github.com/walterhiggins/ScriptCraft/blob/master/docs/YoungPersonsGuideToProgrammingMinecraft.md)
 

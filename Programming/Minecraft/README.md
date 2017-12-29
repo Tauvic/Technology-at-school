@@ -11,3 +11,4 @@ Under construction
 [RoboticCraft](https://github.com/NacOJerk/RoboticCraft) this is a plugin that adds robots to minecraft Your own little slave robots
 
 [Connecting Scratch to Minecraft using Scriptcraft and Node.js](https://github.com/mpatrascu/ScratchMC/)
+[Using Scratch with Minecraft & Scriptcraft – step by step instructions](https://kidslovetocode.wordpress.com/2016/09/27/using-scratch-with-minecraft-scriptcraft-step-by-step-instructions/)

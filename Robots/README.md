@@ -9,6 +9,8 @@ Robots:
 * [Makeblock](./Makeblock) mBot robot with basic to advanced programming
 * [V-REP](./V-REP) 3D world and robot simulator
 
+Im working on a scene where the bigger mBot robots drive around like cars and the smaller Ozobots behave like pedestrians and children.
+
 Also see:
 * my blog: https://tauvicr.wordpress.com/tag/robotics/
 * mBot simulation by NenadZG: https://github.com/NenadZG/mBot-simulation

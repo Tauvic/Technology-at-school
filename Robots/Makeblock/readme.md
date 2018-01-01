@@ -42,6 +42,8 @@ For progress check out [projects](https://github.com/Tauvic/Technology-at-school
 * Improve editor
   * Snap4Arduino https://snap.berkeley.edu/SnapManual.pdf
   * http://www.snap-apps.org/
+  * [Ardublock](http://blog.ardublock.com/) Blockly based arduino programming
+  * [Robotbuilder](https://wpilib.screenstepslive.com/s/currentCS/m/robotbuilder) A very interesting concept
 * PID controller
   * Arduino https://playground.arduino.cc/Code/PIDLibrary
   * Background info (http://brettbeauregard.com/blog/category/pid/)

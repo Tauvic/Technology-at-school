@@ -29,7 +29,7 @@ void t99Callback();
 //t01=Slow sensors
 Task t01(20, TASK_FOREVER, &t01Callback);
 //t02=Actuators
-Task t02(50, TASK_FOREVER, &t02Callback);
+Task t02(40, TASK_FOREVER, &t02Callback);
 //Task t4(1000, TASK_FOREVER, &t4Callback);
 //t99=Communication
 Task t99(TASK_IMMEDIATE, TASK_FOREVER, &t99Callback);
@@ -347,7 +347,11 @@ void parseData(){
         dc.run(0);
         #ifdef LINEFOLLOW_DRIVER
         if (lineDriver) lineDriver->doNothing();
-        #endif        
+        #endif
+        #ifdef RGBLED
+        led.setColor(0,0,0); 
+        led.show();
+        #endif
         buzzerOff();
         callOK();
       }
@@ -617,7 +621,10 @@ void runModule(int device){
    case LINEFOLLOW_DRIVER:
    {
     if (!lineDriver) {
-      if (!lineFollowerArray) return;
+      if (!lineFollowerArray) {
+        lineFollowerArray = new MeLineFollowerArray();
+        lineFollowerArray->reset(port);
+      };
       lineDriver = new LineDriver(lineFollowerArray);
     }
     lineDriver->setParams(readShort(6),readFloat(8));
@@ -1136,6 +1143,7 @@ void loop(){
 
   //Execute scheduler
   runner.execute();
+  //t99Callback();
   
   //last statement before loop end
   robot.loopEnd();

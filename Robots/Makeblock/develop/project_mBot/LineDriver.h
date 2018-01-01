@@ -13,7 +13,8 @@ class LineDriver
 {
     
  public:
-    enum action {do_nothing,do_stop,do_followline,do_left,do_right}; 
+    //          {           can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
+    enum action {do_nothing,do_stop    ,do_followline,do_left,do_right}; 
     //Event record
     typedef struct {
       uint32_t time;

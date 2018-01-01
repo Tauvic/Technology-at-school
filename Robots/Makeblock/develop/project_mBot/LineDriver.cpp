@@ -62,43 +62,72 @@ LineDriver::action LineDriver::drive() {
     case do_nothing:
        break;
 
+    case do_left:
     case do_right:
       //check for timeout
-      if (true || millis() - action_timer < 5000) {
+      //to-do calibrate robot to determine turn rate ==> timeout
+      //to-do do a line calibration to determine average line width
+      if ( millis() - action_timer < 2000 ) {
         //If we see the line then follow else keep on turning
-        if ( abs(sensor->getPosition()) <= 32 ) current_action = do_followline;
+        if ( sensor->getRawValue()==12 ) current_action = do_followline;
       }
       else {
-        //current_action = do_stop;
-        //motor_left = 0;
-        //motor_right = 0;        
+        current_action = do_stop;
+        motor_left = 0;
+        motor_right = 0;        
       }
+      break;
       
 
     case do_followline:
     
       //{can_nowhere,can_forward,can_left,can_right,can_left_right,can_left_right_forward}
       switch ( sensor->getDirection() ) {
-    
+
           case MeLineFollowerArray::can_left_right: 
-          case MeLineFollowerArray::can_right: 
+          {
+            int correction = 0;
+
+            int dice = random(0,100);
+            if (dice < 33) {
+                current_action = do_left;
+                correction = -50;
+            } else if (dice < 66) {
+                current_action = do_followline;
+                correction = 0;
+            } else {
+                current_action = do_right;
+                correction = 50;
+            }
+
+            action_timer = millis(); // Start timer
+            motor_left  = motor_power + correction;
+            motor_right = motor_power - correction;
+            
+            break;
+          }
+         
+
+          case MeLineFollowerArray::can_left: 
             {
-              current_action = do_right;
+              current_action = do_left;
+              int correction = -50;
               action_timer = millis(); // Start timer
-              int correction = 50;
               motor_left  = motor_power + correction;
               motor_right = motor_power - correction;
               break;
             }
           
-          case MeLineFollowerArray::can_left: 
+          case MeLineFollowerArray::can_right: 
             {
-              current_action = do_stop;
-              motor_left = 0;
-              motor_right = 0;          
+              current_action = do_right;
+              int correction = 50;
+              action_timer = millis(); // Start timer
+              motor_left  = motor_power + correction;
+              motor_right = motor_power - correction;
               break;
             }
-        
+                  
           case MeLineFollowerArray::can_forward: 
             {
               int8_t delta = sensor->getPosition(); //Delta is difference in mm             
@@ -119,11 +148,13 @@ LineDriver::action LineDriver::drive() {
               break;
             }
     
-          default: 
+          default: {
             current_action = do_stop;
             motor_left = 0;
             motor_right = 0;
+          }
       }
+      break;
 
   }
 

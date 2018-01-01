@@ -1,12 +1,14 @@
 import msvcrt
 import time, sys
 import string
+import numpy
 from pywinusb import hid
 # controling mBot thru serial wifi with numerical keys 2,4,5,6,8
 # https://github.com/vrbaj/mbot
 
 # handler called when a report is received
 def rx_handler(data):
+    print data
     l = len(data)
     for x in data:
       if (x == ord('@')):  
@@ -29,10 +31,13 @@ if __name__ == '__main__':
 
     print(device)
     print("Open")
-    device.open()
-    device.set_raw_data_handler(rx_handler)
+    #device.open()
+    #device.set_raw_data_handler(rx_handler)
 
     print("Type Q to quit..")
+
+
+    color = 0xFF
 
                     
     while True:
@@ -40,12 +45,30 @@ if __name__ == '__main__':
             if msvcrt.kbhit():
                 key = msvcrt.getch()
                 key_number = ord(key)
-                print(key_number)  # stroked key number
+                #print(key_number)  # stroked key number
                 if key_number == 113:
                     break
-                if key_number == 72:  # go ahead
+                if key_number == 72:  # go ahead 0xff, 0x55, 0x09, 0x00, 0x02, 0x08, 0x07, 0x02, 0x00, r, g, b
+                    print("Send data")
+                    color = ~color
                     device.open()
                     out_report = device.find_output_reports()[0]
+                    my_buffer = [0x0] * 31
+                    my_buffer[0]  = 0x0
+                    my_buffer[1]  = 12
+                    my_buffer[2]  = 0xff
+                    my_buffer[3]  = 0x55
+                    my_buffer[4]  = 0x09
+                    my_buffer[5]  = 0x00
+                    my_buffer[6]  = 0x02 #RUN
+                    my_buffer[7]  = 0x08 #device =8
+                    my_buffer[8]  = 0x07 #port
+                    my_buffer[9]  = 0x02 #slot
+                    my_buffer[10]  = 0x01 #led
+                    my_buffer[11] = color #R
+                    my_buffer[12] = 0x00 #G
+                    my_buffer[13] = 0x00 #B                   
+                    '''
                     my_buffer = [0x0] * 31
                     my_buffer[0] = 0xff
                     my_buffer[1] = 0x55
@@ -56,10 +79,12 @@ if __name__ == '__main__':
                     my_buffer[6] = 0x09
                     my_buffer[7] = 0x00
                     my_buffer[8] = 0x00
-                    my_buffer[9] = 0x0A
-                    out_report.set_raw_data(my_buffer)
+                    my_buffer[9] = 0x0a
+                    '''
+                    #out_report.set_raw_data(my_buffer)
+                    #out_report.send()
                     out_report.send(my_buffer)
-                    device.close()
+                    device.close()                    
         except KeyboardInterrupt:
             print("\nBye")
             device.close

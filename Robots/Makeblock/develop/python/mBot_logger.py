@@ -1,7 +1,6 @@
 import msvcrt
 import time, sys
 import string
-from sets import Set
 from pywinusb import hid
 # controling mBot thru serial wifi with numerical keys 2,4,5,6,8
 # https://github.com/vrbaj/mbot
@@ -62,7 +61,7 @@ if __name__ == '__main__':
                     out_report.send(my_buffer)
                     device.close()
         except KeyboardInterrupt:
-            print "\nBye"
+            print("\nBye")
             device.close
             sys.exit()
 

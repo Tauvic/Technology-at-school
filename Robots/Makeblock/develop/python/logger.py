@@ -9,7 +9,6 @@ from pywinusb import hid
 # handler called when a report is received
 def rx_handler(data):
     print data
-    l = len(data)
     for x in data:
       if (x == ord('@')):  
           sys.stdout.write('\n')
@@ -27,12 +26,15 @@ if __name__ == '__main__':
     if devices:
         device = devices[0]
         print("wifi serial line dongle connected")
+    else:
+        print("no wifi found")
+        sys.exit()
 
 
     print(device)
     print("Open")
-    #device.open()
-    #device.set_raw_data_handler(rx_handler)
+    device.open()
+    device.set_raw_data_handler(rx_handler)
 
     print("Type Q to quit..")
 
@@ -51,7 +53,7 @@ if __name__ == '__main__':
                 if key_number == 72:  # go ahead 0xff, 0x55, 0x09, 0x00, 0x02, 0x08, 0x07, 0x02, 0x00, r, g, b
                     print("Send data")
                     color = ~color
-                    device.open()
+                    #device.open()
                     out_report = device.find_output_reports()[0]
                     my_buffer = [0x0] * 31
                     my_buffer[0]  = 0x0
@@ -84,7 +86,7 @@ if __name__ == '__main__':
                     #out_report.set_raw_data(my_buffer)
                     #out_report.send()
                     out_report.send(my_buffer)
-                    device.close()                    
+                    #device.close()                    
         except KeyboardInterrupt:
             print("\nBye")
             device.close

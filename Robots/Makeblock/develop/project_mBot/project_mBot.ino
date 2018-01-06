@@ -341,17 +341,20 @@ void parseData(){
       break;
       case RESET:{
         //reset
+        #ifdef LINEFOLLOW_DRIVER
+        if (lineDriver) lineDriver->doNothing();
+        #endif
+        
         dc.reset(M1);
         dc.run(0);
         dc.reset(M2);
         dc.run(0);
-        #ifdef LINEFOLLOW_DRIVER
-        if (lineDriver) lineDriver->doNothing();
-        #endif
+
         #ifdef RGBLED
         led.setColor(0,0,0); 
         led.show();
         #endif
+        
         buzzerOff();
         callOK();
       }

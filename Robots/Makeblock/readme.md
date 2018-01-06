@@ -3,7 +3,7 @@
 <img align="right" height="200" src="./images/MeLineFollowerSensor_2.png">
 
 * Goal: Provide an easy to use robot platform to schools for teaching technology, programming and robotics.
-* Aproach: Improve the Makeblock mBot robot: add a user friendly interface and make it move reliable and semi-autonomous.
+* Aproach: Improve the Makeblock mBot robot: add a user friendly interface and make it move reliable and semi-autonomous. Read about this on [mBot improvements](https://github.com/Tauvic/Technology-at-school/wiki/mBot-improvements)
 
 # Getting started
 
@@ -12,7 +12,7 @@
   * If you don't have one use a simulated robot ([V-REP](../V-REP))
 * Programming
   * Read [get started](./get_started)
-  * https://www.codingkids.nl/mBot-lessen.html
+  * [Codingkids lessen](https://www.codingkids.nl/mBot-lessen.html)
 * Read
   * My blog on [robotics](https://tauvicr.wordpress.com/tag/robotics/)
   * [mBlock (Scratch) & mBot "Rocks with the Robots"](https://cdn.shopify.com/s/files/1/1003/6824/files/mBlock_Rocks_with_Robots_Makeblockshop_Compressed_Small.pdf?12769062248011349873)"

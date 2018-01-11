@@ -71,7 +71,6 @@ bool MeLineFollowerArray::readSensor(){
   debug_info[0] = timeout ? 1 : 0;
   debug_info[1] = valid_checksum ? 1 : 0;
 
-
   if (timeout==false && valid_checksum==true) {
 
     //Current sensor reading is a valid reading

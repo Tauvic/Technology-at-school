@@ -339,8 +339,9 @@ void parseData(){
        callOK();
      }
       break;
-      case RESET:{
+     case RESET:{
         //reset
+             
         #ifdef LINEFOLLOW_DRIVER
         if (lineDriver) lineDriver->doNothing();
         #endif
@@ -357,11 +358,18 @@ void parseData(){
         
         buzzerOff();
         callOK();
+
+        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+        Serial.println("@C,reset");
+        #endif         
       }
      break;
      case START:{
-        //start
+        //start        
         callOK();
+        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+        Serial.println("@C,start");
+        #endif         
       }
      break;
   }
@@ -455,6 +463,12 @@ void runModule(int device){
      }
      dc.run(speed);
      #ifdef LINEFOLLOW_DRIVER
+     #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+     Serial.print("@C,m");
+     Serial.print(port);
+     Serial.print(",s");
+     Serial.println(speed);
+     #endif     
      if (lineDriver) lineDriver->doNothing();
      #endif
    } 
@@ -972,7 +986,6 @@ void t99Callback() {
   //Time sensor
   currentTime = millis()/1000.0-lastTime;
 
-
   //IR receiver
   if(ir.decode())
   {
@@ -1151,3 +1164,4 @@ void loop(){
   //last statement before loop end
   robot.loopEnd();
 }
+

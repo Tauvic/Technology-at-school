@@ -67,9 +67,10 @@ LineDriver::action LineDriver::drive() {
       //check for timeout
       //to-do calibrate robot to determine turn rate ==> timeout
       //to-do do a line calibration to determine average line width
-      if ( millis() - action_timer < 2000 ) {
+      if ( millis() - action_timer < 2500 ) {
         //If we see the line then follow else keep on turning
-        if ( sensor->getRawValue()==12 ) current_action = do_followline;
+        uint8_t raw =sensor->getRawValue();
+        if ( raw==B011000 || raw==B001100 || raw==B000110 ) current_action = do_followline;
       }
       else {
         current_action = do_stop;

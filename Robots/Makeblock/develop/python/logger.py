@@ -8,7 +8,7 @@ from pywinusb import hid
 
 # handler called when a report is received
 def rx_handler(data):
-    print data
+    #print data
     for x in data:
       if (x == ord('@')):  
           sys.stdout.write('\n')

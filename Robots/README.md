@@ -1,6 +1,5 @@
+<img align="left" width="300" src="../Robots/Ozobot/Images/img_1031.jpg">
 <img align="right" width="300" src="../Robots/Makeblock/images/mBot-1.png">
-<img align="right" width="300" src="../Robots/Ozobot/Images/img_1031.jpg">
-
 
 Start your journey with the easy to use [Ozobot](./Ozobot) and then continue with the more technicaly challenging types such as the [mBot](./Makeblock). For those who do not have a robot can save money on batteries by using a simulated robot in V-REP.
 

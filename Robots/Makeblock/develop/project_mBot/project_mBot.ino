@@ -4,7 +4,7 @@
 * Updated            : Ander, Mark Yan
 * Version            : V06.01.107
 * Date               : 01/03/2017
-* Description        : Firmware for Makeblock Electronic modules with Scratch.  
+* Description        : Firmware for Makeblock Electronic modules with Scratch.
 * License            : CC-BY-SA 3.0
 * Copyright (C) 2013 - 2016 Maker Works Technology Co., Ltd. All right reserved.
 * http://www.makeblock.cc/
@@ -100,7 +100,7 @@ Task t99(TASK_IMMEDIATE, TASK_FOREVER, &t99Callback);
   #define ENCODER_BOARD_PWM_MOTION         0x03
   #define ENCODER_BOARD_SET_CUR_POS_ZERO   0x04
   #define ENCODER_BOARD_CAR_POS_MOTION     0x05
-  
+
 #define PM25SENSOR     63
   //Secondary command
   #define GET_PM1_0         0x01
@@ -108,7 +108,7 @@ Task t99(TASK_IMMEDIATE, TASK_FOREVER, &t99Callback);
   #define GET_PM10          0x03
 
 #ifdef SERVO
-Servo servos[8];  
+Servo servos[8];
 #endif
 
 MeDCMotor dc;
@@ -202,7 +202,7 @@ union{
   short shortVal;
 }valShort;
 
-#if defined(__AVR_ATmega32U4__) 
+#if defined(__AVR_ATmega32U4__)
 const int analogs[12] PROGMEM = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 #else
 const int analogs[8] PROGMEM = {A0,A1,A2,A3,A4,A5,A6,A7};
@@ -255,7 +255,7 @@ uint8_t keyPressed = KEY_NULL;
  void sendByte(char c);
  void sendString(String s);
  void sendFloat(float value);
- void sendShort(double value);
+ void sendShort(short value);
  void sendDouble(double value);
  short readShort(int idx);
  float readFloat(int idx);
@@ -267,13 +267,13 @@ uint8_t keyPressed = KEY_NULL;
 
 #include "Robot.h"
 Robot robot;
- 
+
 void readButtonInner(uint8_t pin, int8_t s)
 {
   pin = pgm_read_byte(&analogs[pin]);
   pinMode(pin,INPUT);
   boolean currentPressed = !(analogRead(pin)>10);
-      
+
   if(buttonPressed == currentPressed){
     return;
   }
@@ -285,13 +285,13 @@ void readButtonInner(uint8_t pin, int8_t s)
 }
 
 void buzzerOn(){
-  buzzer.tone(500,1000); 
+  buzzer.tone(500,1000);
 }
 void buzzerOff(){
-  buzzer.noTone(); 
+  buzzer.noTone();
 }
 unsigned char readBuffer(int index){
- return buffer[index]; 
+ return buffer[index];
 }
 void writeBuffer(int index,unsigned char c){
   buffer[index]=c;
@@ -341,35 +341,35 @@ void parseData(){
       break;
      case RESET:{
         //reset
-             
+
         #ifdef LINEFOLLOW_DRIVER
         if (lineDriver) lineDriver->doNothing();
         #endif
-        
+
         dc.reset(M1);
         dc.run(0);
         dc.reset(M2);
         dc.run(0);
 
         #ifdef RGBLED
-        led.setColor(0,0,0); 
+        led.setColor(0,0,0);
         led.show();
         #endif
-        
+
         buzzerOff();
         callOK();
 
-        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO
         Serial.println("@C,reset");
-        #endif         
+        #endif
       }
      break;
      case START:{
-        //start        
+        //start
         callOK();
-        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+        #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO
         Serial.println("@C,start");
-        #endif         
+        #endif
       }
      break;
   }
@@ -392,7 +392,7 @@ void sendString(String s){
   }
 }
 //1 byte 2 float 3 short 4 len+string 5 double
-void sendFloat(float value){ 
+void sendFloat(float value){
      writeSerial(2);
      val.floatVal = value;
      writeSerial(val.byteVal[0]);
@@ -400,13 +400,11 @@ void sendFloat(float value){
      writeSerial(val.byteVal[2]);
      writeSerial(val.byteVal[3]);
 }
-void sendShort(double value){
+void sendShort(short value){
      writeSerial(3);
      valShort.shortVal = value;
      writeSerial(valShort.byteVal[0]);
      writeSerial(valShort.byteVal[1]);
-     writeSerial(valShort.byteVal[2]);
-     writeSerial(valShort.byteVal[3]);
 }
 void sendDouble(double value){
      writeSerial(5);
@@ -423,7 +421,7 @@ void sendDouble(double value){
 short readShort(int idx){
   valShort.byteVal[0] = readBuffer(idx);
   valShort.byteVal[1] = readBuffer(idx+1);
-  return valShort.shortVal; 
+  return valShort.shortVal;
 }
 float readFloat(int idx){
   val.byteVal[0] = readBuffer(idx);
@@ -452,7 +450,7 @@ uint8_t* readUint8(int idx,int len){
 }
 
 void runModule(int device){
-  //0xff 0x55 0x6 0x0 0x2 0x22 0x9 0x0 0x0 0xa 
+  //0xff 0x55 0x6 0x0 0x2 0x22 0x9 0x0 0x0 0xa
   int port = readBuffer(6);
   int pin = port;
   switch(device){
@@ -463,15 +461,15 @@ void runModule(int device){
      }
      dc.run(speed);
      #ifdef LINEFOLLOW_DRIVER
-     #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO 
+     #if defined (LOG_COMMAND) && LOG_LEVEL >= LOG_INFO
      Serial.print("@C,m");
      Serial.print(port);
      Serial.print(",s");
      Serial.println(speed);
-     #endif     
+     #endif
      if (lineDriver) lineDriver->doNothing();
      #endif
-   } 
+   }
     break;
     case JOYSTICK:{
      int leftSpeed = readShort(6);
@@ -482,7 +480,7 @@ void runModule(int device){
      dc.run(rightSpeed);
      #ifdef LINEFOLLOW_DRIVER
      if (lineDriver) lineDriver->doNothing();
-     #endif     
+     #endif
     }
     break;
    #ifdef RGBLED
@@ -498,11 +496,11 @@ void runModule(int device){
      }
      if(idx>0)
      {
-       led.setColorAt(idx-1,r,g,b); 
+       led.setColorAt(idx-1,r,g,b);
      }
      else
      {
-       led.setColor(r,g,b); 
+       led.setColor(r,g,b);
      }
      led.show();
    }
@@ -611,14 +609,14 @@ void runModule(int device){
      if(hz>0){
        buzzer.tone(hz,tone_time);
      }else{
-       buzzer.noTone(); 
+       buzzer.noTone();
      }
    }
    break;
    #ifdef SERVO
    case SERVO_PIN:{
      int v = readBuffer(7);
-     Servo sv = servos[searchServoPin(pin)]; 
+     Servo sv = servos[searchServoPin(pin)];
      if(v >= 0 && v <= 180)
      {
        if(!sv.attached())
@@ -631,7 +629,7 @@ void runModule(int device){
    break;
    #endif
    case TIMER:{
-    lastTime = millis()/1000.0; 
+    lastTime = millis()/1000.0;
    }
    break;
    #ifdef LINEFOLLOW_DRIVER
@@ -667,7 +665,7 @@ void readSensor(int device){
   /**************************************************
       ff    55      len idx action device port slot data a
       0     1       2   3   4      5      6    7    8
-      0xff  0x55   0x4 0x3 0x1    0x1    0x1  0xa 
+      0xff  0x55   0x4 0x3 0x1    0x1    0x1  0xa
   ***************************************************/
   float value=0.0;
   int port,slot,pin;
@@ -752,7 +750,7 @@ void readSensor(int device){
      sendFloat(value);
    }
    break;
-   #endif   
+   #endif
    case  LINEFOLLOWER:{
      if(generalDevice.getPort()!=port){
        generalDevice.reset(port);
@@ -776,7 +774,7 @@ void readSensor(int device){
        pinMode(generalDevice.pin2(),INPUT_PULLUP);
        value = !generalDevice.dRead2();
      }
-     sendFloat(value);  
+     sendFloat(value);
    }
    break;
    #endif
@@ -813,13 +811,13 @@ void readSensor(int device){
    }
    break;
    #endif
-   #ifdef FLAMESENSOR 
+   #ifdef FLAMESENSOR
    case FLAMESENSOR:{
      if(FlameSensor.getPort()!=port){
        FlameSensor.reset(port);
        FlameSensor.setpin(FlameSensor.pin2(),FlameSensor.pin1());
      }
-     int16_t FlameData; 
+     int16_t FlameData;
      FlameData = FlameSensor.readAnalog();
      sendShort(FlameData);
    }
@@ -831,7 +829,7 @@ void readSensor(int device){
        GasSensor.reset(port);
        GasSensor.setpin(GasSensor.pin2(),GasSensor.pin1());
      }
-     int16_t GasData; 
+     int16_t GasData;
      GasData = GasSensor.readAnalog();
      sendShort(GasData);
    }
@@ -888,7 +886,7 @@ void readSensor(int device){
    case ROBOT_STATUS:
    {
     //Return statistics such as loop time, motor usage etc.
-    //sendShort(robot.getLoopTime()); 
+    //sendShort(robot.getLoopTime());
     //sendShort(robot.getFreeMem()); // Free memory
     sendShort(t02.getStartDelay()); // driver delay
    }
@@ -898,11 +896,11 @@ void readSensor(int device){
    case LINEFOLLOW_ARRAY:
    {
      if (!lineFollowerArray) lineFollowerArray = new MeLineFollowerArray();
-     
+
      if(lineFollowerArray->getPort()!=port) {
        lineFollowerArray->reset(port);
      };
-     
+
      //get mode: 1=position, 2=bits, 3=raw, 4=debug
      switch (readBuffer(7)) {
       case 1: //Position
@@ -935,7 +933,7 @@ void readSensor(int device){
      {
       //Return blackbox data
       writeSerial(4); //Send string
-      
+
       if (!lineDriver) {
         writeSerial(0); //Send 0 byte string
         return;
@@ -949,12 +947,12 @@ void readSensor(int device){
         writeSerial(ev.raw);
         writeSerial(ev.action);
       }
-      
+
      }
      #endif
 
-   } 
-  
+   }
+
    #endif
   }
 }
@@ -995,7 +993,7 @@ void t99Callback() {
       irIndex = 0;
       irReady = true;
     }else{
-      irBuffer+=irRead; 
+      irBuffer+=irRead;
       irIndex++;
       if(irIndex>64){
         irIndex = 0;
@@ -1027,7 +1025,7 @@ void t99Callback() {
       prevc = c;
       if(isStart){
         if(index==2){
-         dataLen = c; 
+         dataLen = c;
         }else if(index>2){
           dataLen--;
         }
@@ -1036,16 +1034,16 @@ void t99Callback() {
     }
      index++;
      if(index>51){
-      index=0; 
+      index=0;
       isStart=false;
      }
-     if(isStart&&dataLen==0&&index>3){ 
+     if(isStart&&dataLen==0&&index>3){
         isStart = false;
-        parseData(); 
+        parseData();
         index=0;
      }
   }
-  
+
 }
 
 void t02Callback() {
@@ -1059,22 +1057,22 @@ void t02Callback() {
 
     case LineDriver::do_nothing:
        return;
-           
+
     case LineDriver::do_followline:
-       led.setColor(0,255,0); //Color green 
+       led.setColor(0,255,0); //Color green
        break;
 
     case LineDriver::do_left:
-       led.setColorAt(1,255,128,0); 
+       led.setColorAt(1,255,128,0);
        break;
 
     case LineDriver::do_right:
-       led.setColorAt(0,255,128,0); 
+       led.setColorAt(0,255,128,0);
        break;
-       
+
     case LineDriver::do_stop:
        led.setColor(255,0,0); //Color red
-       break;        
+       break;
   }
 
   led.show();
@@ -1084,8 +1082,8 @@ void t02Callback() {
   dc.run(lineDriver->getLeftPower());
   dc.reset(M2);
   dc.run(lineDriver->getRightPower());
-#endif       
-  
+#endif
+
 }
 
 Scheduler runner;
@@ -1095,16 +1093,16 @@ void setup(){
 
   //Flash on board led
   pinMode(13,OUTPUT);
-  digitalWrite(13,HIGH);  
+  digitalWrite(13,HIGH);
   delay(300);
   digitalWrite(13,LOW);
-  
+
   //Enable serial data transmission
   Serial.begin(115200);
   delay(500);
 
   //Short buzz
-  buzzer.tone(500,50); 
+  buzzer.tone(500,50);
   delay(50);
   buzzerOff();
 
@@ -1115,14 +1113,14 @@ void setup(){
   led.setpin(13);
   led.setColor(0,0,255);
   led.show();
-  
+
   #ifdef GYRO
   gyro.begin();
   #endif
-  
+
   //Serial.print("Version: ");
   //Serial.println(mVersion);
-  
+
   #ifdef LEDMATRIX
   ledMx.setBrightness(6);
   ledMx.setColorIndex(1);
@@ -1149,7 +1147,7 @@ void setup(){
   //set speed and Kp
   lineDriver->setParams(80,3.0);
   lineDriver->doFollowLine();
-#endif  
+#endif
 
 }
 
@@ -1160,7 +1158,7 @@ void loop(){
   //Execute scheduler
   runner.execute();
   //t99Callback();
-  
+
   //last statement before loop end
   robot.loopEnd();
 }

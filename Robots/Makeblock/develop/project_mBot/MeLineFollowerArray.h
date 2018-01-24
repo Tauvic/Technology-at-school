@@ -9,7 +9,7 @@
 #include "MeConfig.h"
 
 #ifdef ME_PORT_DEFINED
-#include "MePort.h"
+#include <MePort.h>
 #endif /* ME_PORT_DEFINED */
 
 class MeLineFollowerArray : public MePort
@@ -27,9 +27,9 @@ class MeLineFollowerArray : public MePort
     uint8_t *getDebugInfo();    
   private:
     uint8_t debug_info[8];
-    uint8_t raw = 64;
-    uint8_t density = 0;
-    int8_t weighted = 64;
+    uint8_t raw;
+    uint8_t density;
+    int8_t weighted;
     bool validReading = false;
     bool isValidLine(uint8_t raw);
 };

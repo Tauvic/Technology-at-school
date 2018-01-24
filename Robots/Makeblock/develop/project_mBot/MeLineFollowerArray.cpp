@@ -1,11 +1,14 @@
 #include "MeLineFollowerArray.h"
 
+
 MeLineFollowerArray::MeLineFollowerArray(){
+	raw = 64;
+	density = 0;
+	weighted = 64;
 }
 
 bool MeLineFollowerArray::readSensor(){
 
-  unsigned long time_out_start = 0;
   bool timeout = false;
   uint8_t DataPin = pin2(); // 12
 

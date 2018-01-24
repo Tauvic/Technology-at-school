@@ -35,12 +35,12 @@ class LineDriver
     event  popEvent();
  private:
     MeLineFollowerArray* sensor;
-    uint8_t motor_power = 0;
-    float   motor_kP = 0.0;
-    int     motor_left = 0;
-    int     motor_right = 0;    
-    action current_action = do_nothing;
-    long    action_timer = 0;
+    uint8_t motor_power;
+    float   motor_kP;
+    int     motor_left;
+    int     motor_right;
+    action current_action;
+    long    action_timer;
     CircularBuffer<event, 10> events;
 };
 

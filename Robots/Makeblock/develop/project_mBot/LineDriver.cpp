@@ -2,6 +2,12 @@
 
 LineDriver::LineDriver(MeLineFollowerArray* _sensor){
   sensor = _sensor;
+  motor_power=0;
+  motor_kP =0;
+  motor_left =0;
+  motor_right=0;
+  current_action = do_nothing;
+  action_timer=0;
 }
 
 void LineDriver::setParams(uint8_t power,float kP) {
@@ -59,6 +65,14 @@ LineDriver::action LineDriver::drive() {
 #endif 
 
   switch (current_action) {
+
+	case do_stop: {
+		current_action = do_stop;
+		motor_left = 0;
+		motor_right = 0;
+		break;
+	}
+
     case do_nothing:
        break;
 

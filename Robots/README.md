@@ -7,6 +7,7 @@ Robots:
 * [Ozobot](./Ozobot) basic robot (for children 4-7 years) with predefined moves and programming
 * [Makeblock](./Makeblock) mBot robot with basic to advanced programming
 * [V-REP](./V-REP) 3D world and robot simulator
+* [RoboAGVSim AGV Simulator] (https://www.youtube.com/watch?v=WTLu9m7z2eU)
 
 Im working on a scene where the bigger mBot robots drive around like cars and the smaller Ozobots behave like pedestrians and children.
 

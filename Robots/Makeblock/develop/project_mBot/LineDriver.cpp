@@ -6,7 +6,8 @@ LineDriver::LineDriver(MeLineFollowerArray* _sensor){
   motor_kP =0;
   motor_left =0;
   motor_right=0;
-  current_action = do_nothing;
+  current_action = action::do_nothing;
+  current_status = status::idle;
   action_timer=0;
 }
 
@@ -20,17 +21,33 @@ LineDriver::action LineDriver::getCurrentAction() {
   return current_action;
 }
 
+LineDriver::status LineDriver::getCurrentStatus() {
+  return current_status;
+}
+
 void LineDriver::doNothing() {
-  current_action = do_nothing;
+  current_action = action::do_nothing;
+  current_status = status::idle;
 }
 
 void LineDriver::doFollowLine() {
-  current_action = do_followline;
+  current_action = action::do_followline;
+  current_status = status::driving;
 }
 
+void LineDriver::doTurnLeft() {
+  current_action = action::do_turnLeftOnNextCrossing;
+  current_status = status::driving;
+}
+
+void LineDriver::doTurnRight() {
+  current_action = action::do_turnRightOnNextCrossing;
+  current_status = status::driving;
+}
 
 void LineDriver::doStop() {
   current_action = do_stop;
+  current_status = status::idle;
 }
 
 int LineDriver::getLeftPower() {
@@ -64,30 +81,55 @@ LineDriver::action LineDriver::drive() {
   Serial.print(current_action);  
 #endif 
 
+  //## Steer robot to next crossing
+  //Command can get aborted by:
+  // Manual override: the user takes control of the robot by sending explicit motor commands
+  // Object collision: the robot detects an object in its path and stops
+  // Loss of line: the robot does not see the line and stops
+  // Wrong way: The robots reaches the intersection but cannot go left/right/forward
+  //
+  //goal {turnLeftOnNextCrossing, turnRightOnNextCrossing, goForwardOnNextCrossing}
+  //lineSensor {online, offline, intersection}
+  //collisionSensor {free, collision}
+  //situation {beforeCrossing, onCrossing, afterCrossing}
+  //internal action {followline, goLeft, goRight, goForward, stop}
+  //result {busy, success, failed}
+  //reason {lineLoss, noWay, collision, aborted, error, noPower}
+
+
   switch (current_action) {
 
 	case do_stop: {
-		current_action = do_stop;
+		current_action = action::do_stop;
+        current_status = status::idle;
 		motor_left = 0;
 		motor_right = 0;
 		break;
 	}
 
     case do_nothing:
-       break;
+		current_action = action::do_nothing;
+        current_status = status::idle;
+        break;
 
     case do_left:
     case do_right:
+        current_status =  status::turning;
       //check for timeout
       //to-do calibrate robot to determine turn rate ==> timeout
       //to-do do a line calibration to determine average line width
       if ( millis() - action_timer < 2500 ) {
         //If we see the line then follow else keep on turning
         uint8_t raw =sensor->getRawValue();
-        if ( raw==B011000 || raw==B001100 || raw==B000110 ) current_action = do_followline;
+        if ( raw==B011000 || raw==B001100 || raw==B000110 ) {
+        	//line detected
+        	current_action = do_followline;
+        }
       }
       else {
-        current_action = do_stop;
+    	//timeout situation: stop the robot
+        current_action = action::do_stop;
+        current_status =  status::aborted;
         motor_left = 0;
         motor_right = 0;        
       }

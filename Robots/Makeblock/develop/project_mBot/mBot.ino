@@ -19,7 +19,7 @@
 #include "TaskScheduler.h"
 
 // Callback methods prototypes
-//void t01Callback();
+void t01Callback();
 void t02Callback();
 void t99Callback();
 //void t4Callback();
@@ -27,7 +27,7 @@ void t99Callback();
 //Tasks
 
 //t01=Slow sensors
-//Task t01(20, TASK_FOREVER, &t01Callback);
+Task t01(20, TASK_FOREVER, &t01Callback);
 //t02=Actuators
 Task t02(40, TASK_FOREVER, &t02Callback);
 //Task t4(1000, TASK_FOREVER, &t4Callback);
@@ -901,8 +901,6 @@ void readSensor(int device){
        lineFollowerArray->reset(port);
      };
 
-     lineFollowerArray->readSensor();
-
      //get mode: 1=position, 2=bits, 3=raw, 4=debug
      switch (readBuffer(7)) {
       case 1: //Position
@@ -1132,11 +1130,11 @@ void setup(){
   //Start task scheduler
   runner.init();
 
-  //runner.addTask(t01);
+  runner.addTask(t01);
   runner.addTask(t02);
   runner.addTask(t99);
 
-  //t01.enable();
+  t01.enable();
   t02.enable();
   t99.enable();
 
